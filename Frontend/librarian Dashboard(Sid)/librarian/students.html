@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Student Management</title>
+
+    <!-- Google Font -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+
+    <link rel="stylesheet"
+          href="css/students.css">
+
+</head>
+
+<body>
+
+<div class="students-page">    <!-- ================= Sidebar ================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <i class="fa-solid fa-book-open-reader"></i>
+
+            <h2>LibraryMS</h2>
+
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <ul>
+
+                <li>
+
+                    <a href="index.html">
+
+                        <i class="fa-solid fa-house"></i>
+
+                        <span>Dashboard</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="books.html">
+
+                        <i class="fa-solid fa-book"></i>
+
+                        <span>Books</span>
+
+                    </a>
+
+                </li>
+
+                <li class="active">
+
+                    <a href="students.html">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        <span>Students</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="issue-book.html">
+
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
+                        <span>Issue Book</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="return-book.html">
+
+                        <i class="fa-solid fa-rotate-left"></i>
+
+                        <span>Return Book</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="fine.html">
+
+                        <i class="fa-solid fa-money-bill-wave"></i>
+
+                        <span>Fine</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="reports.html">
+
+                        <i class="fa-solid fa-chart-line"></i>
+
+                        <span>Reports</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="settings.html">
+
+                        <i class="fa-solid fa-gear"></i>
+
+                        <span>Settings</span>
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <a href="#">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside><!-- ================= Main Content ================= -->
+
+<main class="students-content">
+
+    <!-- Page Header -->
+
+    <section class="students-header">
+
+        <div class="header-text">
+
+            <h1>Student Management</h1>
+
+            <p>Manage all registered students in your library.</p>
+
+        </div>
+
+        <button class="add-student-btn">
+
+            <i class="fa-solid fa-user-plus"></i>
+
+            Add New Student
+
+        </button>
+
+    </section>
+
+    <!-- Search -->
+
+    <section class="search-section">
+
+        <div class="student-search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="searchStudent"
+                placeholder="Search by name, roll number or course">
+
+        </div>
+
+    </section>    <!-- ================= Students Table ================= -->
+
+    <!-- ================= Students Table ================= -->
+
+<section class="students-table-section">
+
+    <div class="table-header">
+
+        <h2>Registered Students</h2>
+
+        <span>Total Students: <span id="totalStudentsCount">0</span></span>
+
+    </div>
+
+    <table class="students-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Student ID</th>
+
+                <th>Name</th>
+
+                <th>Course</th>
+
+                <th>Year</th>
+
+                <th>Phone</th>
+
+                <th>Status</th>
+
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        </tbody>
+
+    </table>
+
+</section>    <!-- ================= Add Student Modal ================= -->
+
+    <div class="modal-overlay" id="addStudentModal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <h2>Add New Student</h2>
+
+                <button class="close-modal-btn" id="closeStudentModal">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+            <form class="student-form" id="studentForm">
+
+                <div class="form-group">
+
+                    <label>Student Name</label>
+
+                    <input
+                        type="text"
+                        id="studentName"
+                        placeholder="Enter student name">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Student ID</label>
+
+                    <input
+                        type="text"
+                        id="studentId"
+                        placeholder="Example: ST004">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Course</label>
+
+                    <select id="studentCourse">
+
+                        <option>Select Course</option>
+
+                        <option>B.E Computer</option>
+
+                        <option>BCA</option>
+
+                        <option>B.Sc IT</option>
+
+                        <option>B.Tech AI</option>
+
+                        <option>B.Tech Data Science</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Year</label>
+
+                    <select id="studentYear">
+
+                        <option>Select Year</option>
+
+                        <option>1st Year</option>
+
+                        <option>2nd Year</option>
+
+                        <option>3rd Year</option>
+
+                        <option>4th Year</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Phone Number</label>
+
+                    <input
+                        type="tel"
+                        id="studentPhone"
+                        placeholder="Enter phone number">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    <input
+                        type="email"
+                        id="studentEmail"
+                        placeholder="Enter email address">
+
+                </div>
+
+                <div class="form-buttons">
+
+                    <button type="button" class="cancel-btn">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit" class="save-btn">
+
+                        Save Student
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>    <!-- ================= Footer ================= -->
+
+    <footer class="students-footer">
+
+        <p>
+
+            © 2026 Library Management System | Student Management
+
+        </p>
+
+    </footer>
+
+</main>
+
+</div>
+
+<!-- Bootstrap JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Shared Database -->
+
+<script src="data/library-data.js"></script>
+
+<!-- Students JavaScript -->
+
+<script src="js/students.js"></script>
+
+</body>
+
+</html>

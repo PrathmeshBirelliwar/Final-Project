@@ -1,0 +1,503 @@
+/* ==========================================
+   FINE PAGE
+========================================== */
+
+.main-content{
+
+    padding:30px;
+
+    background:#f5f7fb;
+
+    min-height:100vh;
+
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.top-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.top-header h1{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:#222;
+
+}
+
+.top-header p{
+
+    color:#777;
+
+    margin-top:5px;
+
+}
+
+/* ==========================================
+   DASHBOARD CARDS
+========================================== */
+
+.fine-cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+    margin-bottom:30px;
+
+}
+
+.fine-card{
+
+    background:#fff;
+
+    border-radius:12px;
+
+    padding:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    text-align:center;
+
+}
+
+.fine-card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.fine-card i{
+
+    font-size:35px;
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.fine-card h2{
+
+    font-size:30px;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+}
+
+.fine-card p{
+
+    color:#777;
+
+    margin:0;
+
+}
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+.search-section{
+
+    margin-bottom:25px;
+
+}
+
+.search-box{
+
+    display:flex;
+
+    align-items:center;
+
+    background:#fff;
+
+    border-radius:10px;
+
+    padding:12px 18px;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+
+}
+
+.search-box i{
+
+    color:#666;
+
+    margin-right:12px;
+
+}
+
+.search-box input{
+
+    border:none;
+
+    outline:none;
+
+    width:100%;
+
+    font-size:15px;
+
+    background:none;
+
+}/* ==========================================
+   TABLE
+========================================== */
+
+.fine-table-section{
+
+    background:#ffffff;
+
+    border-radius:12px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+    overflow:hidden;
+
+}
+
+.table-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px;
+
+    border-bottom:1px solid #eeeeee;
+
+}
+
+.table-header h2{
+
+    margin:0;
+
+    font-size:22px;
+
+    font-weight:600;
+
+}
+
+.fine-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.fine-table thead{
+
+    background:#2563eb;
+
+    color:#ffffff;
+
+}
+
+.fine-table th{
+
+    padding:16px;
+
+    text-align:left;
+
+    font-weight:600;
+
+}
+
+.fine-table td{
+
+    padding:16px;
+
+    border-bottom:1px solid #eeeeee;
+
+}
+
+.fine-table tbody tr{
+
+    transition:.3s;
+
+}
+
+.fine-table tbody tr:hover{
+
+    background:#f8fafc;
+
+}
+
+/* ==========================================
+   STATUS
+========================================== */
+
+.status{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.status.pending{
+
+    background:#fff3cd;
+
+    color:#856404;
+
+}
+
+.status.paid{
+
+    background:#d1fae5;
+
+    color:#065f46;
+
+}
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+.pay-btn{
+
+    width:40px;
+
+    height:40px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#16a34a;
+
+    color:#ffffff;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.pay-btn:hover{
+
+    background:#15803d;
+
+}
+
+/* ==========================================
+   MODAL
+========================================== */
+
+.modal-overlay{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:rgba(0,0,0,.45);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:999;
+
+}
+
+.modal-box{
+
+    width:500px;
+
+    max-width:95%;
+
+    background:#ffffff;
+
+    border-radius:12px;
+
+    padding:25px;
+
+}
+
+.modal-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.modal-header h2{
+
+    margin:0;
+
+    font-size:24px;
+
+}
+
+.modal-header button{
+
+    border:none;
+
+    background:none;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+}
+
+.form-group{
+
+    margin-bottom:18px;
+
+}
+
+.form-group label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+}
+
+.form-group input{
+
+    width:100%;
+
+    padding:12px;
+
+    border:1px solid #dcdcdc;
+
+    border-radius:8px;
+
+    outline:none;
+
+    background:#f8fafc;
+
+}
+
+.modal-buttons{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:12px;
+
+    margin-top:20px;
+
+}
+
+.cancel-btn{
+
+    border:none;
+
+    padding:10px 20px;
+
+    border-radius:8px;
+
+    background:#6b7280;
+
+    color:#ffffff;
+
+    cursor:pointer;
+
+}
+
+.primary-btn{
+
+    border:none;
+
+    padding:10px 20px;
+
+    border-radius:8px;
+
+    background:#2563eb;
+
+    color:#ffffff;
+
+    cursor:pointer;
+
+}
+
+.primary-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:992px){
+
+    .fine-cards{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .fine-cards{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .fine-table{
+
+        display:block;
+
+        overflow-x:auto;
+
+    }
+
+    .modal-box{
+
+        width:95%;
+
+    }
+
+}

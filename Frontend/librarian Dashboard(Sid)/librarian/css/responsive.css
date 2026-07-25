@@ -1,0 +1,97 @@
+/* ==========================================
+   LAPTOP
+========================================== */
+
+@media(max-width:1200px){
+
+    .statistics-section{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media(max-width:992px){
+
+    .dashboard-body{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media(max-width:768px){
+
+    .sidebar{
+
+        width:80px;
+
+    }
+
+    .sidebar-logo h2{
+
+        display:none;
+
+    }
+
+    .sidebar-nav ul li a span{
+
+        display:none;
+
+    }
+
+    .sidebar-footer span{
+
+        display:none;
+
+    }
+
+    .main-content{
+
+        margin-left:80px;
+
+        width:calc(100% - 80px);
+
+    }
+
+    .top-header{
+
+        flex-direction:column;
+
+        gap:20px;
+
+        align-items:flex-start;
+
+    }
+
+    .header-right{
+
+        width:100%;
+
+        flex-wrap:wrap;
+
+    }
+
+    .search-box{
+
+        width:100%;
+
+    }
+
+    .statistics-section{
+
+        grid-template-columns:1fr;
+
+    }
+
+}

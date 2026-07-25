@@ -1,0 +1,131 @@
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1100px) {
+
+    .stats-grid {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+
+    .recommended-grid {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+
+        width: 70px;
+
+    }
+
+
+    .logo span,
+
+    .menu-item span {
+
+        display: none;
+
+    }
+
+
+    .menu-item {
+
+        justify-content: center;
+
+    }
+
+
+    .topbar {
+
+        padding: 0 20px;
+
+    }
+
+
+    .search-box {
+
+        width: 250px;
+
+    }
+
+
+    .dashboard-content {
+
+        padding: 20px;
+
+    }
+
+
+    .page-heading {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 15px;
+
+    }
+
+}
+
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .stats-grid,
+
+    .recommended-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .profile-mini div:last-child {
+
+        display: none;
+
+    }
+
+
+    .search-box {
+
+        width: 180px;
+
+    }
+
+}
+
+/* Member pages use additional component styles; keep their desktop design while preventing mobile overflow. */
+@media (max-width: 900px) {
+    .book-details-card, .profile-layout { grid-template-columns: 1fr; }
+    .additional-details, .related-books, .borrow-summary, .reservation-summary, .fine-summary, .digital-resources { grid-template-columns: repeat(2, 1fr); }
+    .borrowed-book-card, .history-card, .reservation-card { grid-template-columns: 70px 1fr; }
+    .book-actions, .reservation-actions { grid-column: 2; align-items: flex-start; }
+}
+@media (max-width: 600px) {
+    .book-content, .book-details-page, .borrowed-page, .profile-page, .history-page, .reservations-page, .fines-page, .digital-library-page { padding: 20px; }
+    .book-details-card { padding: 20px; gap: 25px; }
+    .details-cover, .cover-actions { width: min(280px, 100%); }
+    .book-meta-grid, .additional-details, .related-books, .borrow-summary, .reservation-summary, .fine-summary, .digital-resources { grid-template-columns: 1fr; }
+    .borrow-toolbar, .page-header { align-items: stretch; flex-direction: column; }
+    .borrow-search { width: 100%; }
+    .book-dates, .action-buttons { flex-wrap: wrap; }
+}

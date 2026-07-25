@@ -1,0 +1,256 @@
+/* ==========================================
+   SETTINGS PAGE
+========================================== */
+
+.main-content{
+
+    padding:30px;
+
+    background:#f5f7fb;
+
+    min-height:100vh;
+
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.top-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.top-header h1{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:#222;
+
+}
+
+.top-header p{
+
+    color:#777;
+
+    margin-top:5px;
+
+}
+
+/* ==========================================
+   SETTINGS CARD
+========================================== */
+
+.settings-card{
+
+    background:#ffffff;
+
+    border-radius:12px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.settings-card h2{
+
+    font-size:22px;
+
+    font-weight:600;
+
+    margin-bottom:25px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.settings-card h2 i{
+
+    color:#2563eb;
+
+}
+
+/* ==========================================
+   GRID
+========================================== */
+
+.settings-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:20px;
+
+}
+
+/* ==========================================
+   FORM
+========================================== */
+
+.form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.form-group label{
+
+    font-weight:600;
+
+    margin-bottom:8px;
+
+    color:#444;
+
+}
+
+.form-group input{
+
+    padding:12px;
+
+    border:1px solid #dcdcdc;
+
+    border-radius:8px;
+
+    outline:none;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.form-group input:focus{
+
+    border-color:#2563eb;
+
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+.settings-buttons{
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+}
+
+.save-btn,
+.reset-btn,
+.delete-btn{
+
+    border:none;
+
+    padding:12px 22px;
+
+    border-radius:8px;
+
+    color:#ffffff;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:500;
+
+    transition:.3s;
+
+}
+
+.save-btn{
+
+    background:#2563eb;
+
+}
+
+.save-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+.reset-btn{
+
+    background:#f59e0b;
+
+}
+
+.reset-btn:hover{
+
+    background:#d97706;
+
+}
+
+.delete-btn{
+
+    background:#dc2626;
+
+}
+
+.delete-btn:hover{
+
+    background:#b91c1c;
+
+}
+
+.settings-buttons i{
+
+    margin-right:8px;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:992px){
+
+    .settings-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .settings-buttons{
+
+        flex-direction:column;
+
+    }
+
+    .save-btn,
+    .reset-btn,
+    .delete-btn{
+
+        width:100%;
+
+    }
+
+}
+

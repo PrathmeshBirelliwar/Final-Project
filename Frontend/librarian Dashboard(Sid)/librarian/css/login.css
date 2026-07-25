@@ -1,0 +1,391 @@
+/* ==========================================
+   GLOBAL
+========================================== */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+    font-family:"Poppins",sans-serif;
+
+}
+
+body{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    min-height:100vh;
+
+    background:linear-gradient(135deg,#2563eb,#1e40af);
+
+}
+
+/* ==========================================
+   LOGIN CARD
+========================================== */
+
+.login-container{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:20px;
+
+}
+
+.login-card{
+
+    width:420px;
+
+    max-width:100%;
+
+    background:#ffffff;
+
+    border-radius:16px;
+
+    padding:40px;
+
+    box-shadow:0 20px 50px rgba(0,0,0,.2);
+
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.login-header{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+}
+
+.login-header i{
+
+    font-size:60px;
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.login-header h1{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#222;
+
+}
+
+.login-header p{
+
+    margin-top:8px;
+
+    color:#666;
+
+}
+
+/* ==========================================
+   FORM
+========================================== */
+
+.form-group{
+
+    margin-bottom:20px;
+
+}
+
+.form-group label{
+
+    display:block;
+
+    font-weight:600;
+
+    margin-bottom:8px;
+
+    color:#444;
+
+}
+
+.form-group input{
+
+    width:100%;
+
+    padding:13px 15px;
+
+    border:1px solid #dcdcdc;
+
+    border-radius:8px;
+
+    outline:none;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.form-group input:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+
+}/* ==========================================
+   PASSWORD BOX
+========================================== */
+
+.password-box{
+
+    position:relative;
+
+}
+
+.password-box input{
+
+    padding-right:50px;
+
+}
+
+#togglePassword{
+
+    position:absolute;
+
+    right:10px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    color:#666;
+
+}
+
+/* ==========================================
+   REMEMBER ME
+========================================== */
+
+.remember-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+    font-size:14px;
+
+}
+
+.remember-row label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    color:#555;
+
+    cursor:pointer;
+
+}
+
+/* ==========================================
+   LOGIN BUTTON
+========================================== */
+
+.login-btn{
+
+    width:100%;
+
+    border:none;
+
+    background:#2563eb;
+
+    color:#ffffff;
+
+    padding:14px;
+
+    border-radius:8px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.login-btn i{
+
+    margin-right:8px;
+
+}
+
+.login-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+/* ==========================================
+   ERROR MESSAGE
+========================================== */
+
+.error-message{
+
+    color:#dc2626;
+
+    text-align:center;
+
+    margin-top:15px;
+
+    font-size:14px;
+
+    min-height:20px;
+
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.login-footer{
+
+    text-align:center;
+
+    margin-top:30px;
+
+    color:#888;
+
+    font-size:14px;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:480px){
+
+    .login-card{
+
+        padding:30px 20px;
+
+    }
+
+    .login-header h1{
+
+        font-size:28px;
+
+    }
+
+    .login-header i{
+
+        font-size:50px;
+
+    }
+
+}/* ==========================================
+   FORGOT PASSWORD
+========================================== */
+
+.remember-row a{
+
+    color:#2563eb;
+
+    text-decoration:none;
+
+    font-size:14px;
+
+    font-weight:500;
+
+}
+
+.remember-row a:hover{
+
+    text-decoration:underline;
+
+}
+
+/* ==========================================
+   MODAL
+========================================== */
+
+.modal-overlay{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:rgba(0,0,0,.45);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+}
+
+.modal-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.modal-header button{
+
+    border:none;
+
+    background:none;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+}

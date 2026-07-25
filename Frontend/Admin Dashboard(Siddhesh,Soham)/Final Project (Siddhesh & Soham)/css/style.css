@@ -1,0 +1,730 @@
+/* ==========================================================================
+   Smart Library Management System - Unified Design System
+   Inspired by Reference UI: Modern, Professional, Clean & Premium
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Color Palette */
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #eff6ff;
+    --primary-border: #dbeafe;
+    
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-sidebar: #ffffff;
+    
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-body: #334155;
+    
+    --border-color: #e2e8f0;
+    --border-light: #f1f5f9;
+    
+    --sidebar-width: 260px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+    --shadow-hover: 0 12px 20px -4px rgba(37, 99, 235, 0.12);
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-pill: 9999px;
+    
+    /* Status Colors */
+    --status-success-bg: #dcfce7;
+    --status-success-text: #15803d;
+    --status-warning-bg: #fef3c7;
+    --status-warning-text: #b45309;
+    --status-danger-bg: #fee2e2;
+    --status-danger-text: #b91c1c;
+}
+
+/* Reset & Core Setup */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+body {
+    background-color: var(--bg-main) !important;
+    background-image: none !important;
+    color: var(--text-body) !important;
+    min-height: 100vh !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body::before, body::after {
+    display: none !important; /* Remove background overlays and floating circles */
+}
+
+/* ==========================================================================
+   Sidebar Navigation Component (Unified Dimensions & Styling)
+   ========================================================================== */
+
+.sidebar {
+    width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    background: var(--bg-sidebar) !important;
+    border-right: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-sm) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    z-index: 1000 !important;
+    overflow-y: auto !important;
+    padding-bottom: 24px !important;
+    transition: all 0.3s ease !important;
+    animation: none !important;
+}
+
+/* Hide legacy sidebar scrollbar styling */
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: var(--radius-pill);
+}
+
+.sidebar h3, .sidebar h2, .sidebar .logo {
+    padding: 24px 24px 20px 24px !important;
+    margin: 0 0 12px 0 !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    border-bottom: 1px solid var(--border-light) !important;
+    letter-spacing: -0.3px !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    text-align: left !important;
+}
+
+.sidebar h3::before, .sidebar h2::before {
+    content: "\F1CC" !important; /* Bootstrap icon bi-book-half */
+    font-family: "bootstrap-icons" !important;
+    font-size: 24px !important;
+    color: var(--primary-color) !important;
+    font-weight: normal !important;
+}
+
+.sidebar h3::after {
+    display: none !important;
+}
+
+.sidebar a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 12px 18px !important;
+    margin: 3px 16px !important;
+    border-radius: var(--radius-md) !important;
+    color: var(--text-muted) !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease-in-out !important;
+    border-left: none !important;
+    background: transparent !important;
+    transform: none !important;
+}
+
+.sidebar a i {
+    font-size: 18px !important;
+    color: var(--text-muted) !important;
+    transition: color 0.2s ease-in-out !important;
+    margin-right: 0 !important;
+}
+
+.sidebar a:hover {
+    background: var(--bg-main) !important;
+    color: var(--primary-color) !important;
+    border-left: none !important;
+    padding-left: 18px !important;
+    transform: translateX(2px) !important;
+}
+
+.sidebar a:hover i {
+    color: var(--primary-color) !important;
+}
+
+/* Active Sidebar Link Highlight (Inspired by Reference UI) */
+.sidebar a.active,
+.sidebar a:focus {
+    background: var(--primary-light) !important;
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+}
+
+.sidebar a.active i {
+    color: var(--primary-color) !important;
+}
+
+/* Logout Link Styling */
+.sidebar a[href="logout.html"], 
+.sidebar a[href*="logout"] {
+    margin-top: auto !important;
+    color: #ef4444 !important;
+}
+
+.sidebar a[href="logout.html"] i, 
+.sidebar a[href*="logout"] i {
+    color: #ef4444 !important;
+}
+
+.sidebar a[href="logout.html"]:hover, 
+.sidebar a[href*="logout"]:hover {
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+}
+
+/* ==========================================================================
+   Page Main Content Area (Unified Layout & Margins)
+   ========================================================================== */
+
+.content, .container, header + .container {
+    margin-left: var(--sidebar-width) !important;
+    padding: 32px 40px !important;
+    min-height: 100vh !important;
+    max-width: calc(100% - var(--sidebar-width)) !important;
+    width: auto !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+}
+
+.content::before {
+    display: none !important;
+}
+
+/* Standalone Header Bar (For pages using <header>) */
+header {
+    margin-left: var(--sidebar-width) !important;
+    background: var(--bg-card) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 24px 40px !important;
+    height: auto !important;
+    color: var(--text-main) !important;
+    box-shadow: var(--shadow-sm) !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+}
+
+header i {
+    color: var(--primary-color) !important;
+    font-size: 26px !important;
+    margin-right: 0 !important;
+}
+
+/* Topbar Header Banner Component */
+.topbar {
+    background: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    padding: 24px 32px !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-sm) !important;
+    border: 1px solid var(--border-light) !important;
+    margin-bottom: 32px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    animation: none !important;
+}
+
+.topbar h2, .topbar h1 {
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    margin: 0 !important;
+    letter-spacing: -0.3px !important;
+}
+
+.topbar p {
+    margin: 0 !important;
+    color: var(--text-muted) !important;
+    font-size: 14px !important;
+}
+
+/* Page Section Titles */
+h2, .h2 {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    letter-spacing: -0.3px !important;
+    margin-bottom: 20px !important;
+}
+
+/* ==========================================================================
+   Cards & Widgets System (Inspired by Reference UI Cards)
+   ========================================================================== */
+
+.card {
+    border: 1px solid var(--border-light) !important;
+    border-radius: var(--radius-lg) !important;
+    background: var(--bg-card) !important;
+    backdrop-filter: none !important;
+    overflow: hidden !important;
+    transition: all 0.25s ease-in-out !important;
+    box-shadow: var(--shadow-md) !important;
+    position: relative !important;
+    margin-bottom: 24px !important;
+    animation: none !important;
+}
+
+.card::before {
+    display: none !important;
+}
+
+.card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: var(--shadow-hover) !important;
+    border-color: var(--primary-border) !important;
+}
+
+/* Stat Icon Styling Inside Cards */
+.card i {
+    font-size: 28px !important;
+    color: var(--primary-color) !important;
+    background: var(--primary-light) !important;
+    width: 56px !important;
+    height: 56px !important;
+    border-radius: var(--radius-md) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 12px !important;
+    background-clip: border-box !important;
+    -webkit-text-fill-color: initial !important;
+}
+
+.card h4, .card h3 {
+    font-size: 26px !important;
+    color: var(--text-main) !important;
+    font-weight: 700 !important;
+    margin-top: 4px !important;
+    margin-bottom: 2px !important;
+}
+
+.card p {
+    color: var(--text-muted) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+}
+
+.cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+    gap: 24px !important;
+    margin-bottom: 32px !important;
+}
+
+/* Card layout specifics */
+.card:last-child {
+    text-align: left !important;
+}
+
+.card:last-child h4 {
+    margin-bottom: 12px !important;
+}
+
+/* ==========================================================================
+   Table Component Styling (Clean, Modern & Premium)
+   ========================================================================== */
+
+table, .table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: var(--bg-card) !important;
+    border-radius: var(--radius-lg) !important;
+    overflow: hidden !important;
+    margin-top: 16px !important;
+    border: 1px solid var(--border-light) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+table thead, .table thead {
+    background: var(--bg-main) !important;
+}
+
+table th, .table th, .table-dark th {
+    background: var(--bg-main) !important;
+    color: var(--text-muted) !important;
+    padding: 14px 18px !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    font-weight: 600 !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    border-top: none !important;
+    text-align: left !important;
+}
+
+table td, .table td {
+    padding: 16px 18px !important;
+    color: var(--text-body) !important;
+    font-size: 14px !important;
+    border-bottom: 1px solid var(--border-light) !important;
+    vertical-align: middle !important;
+    background: transparent !important;
+    text-align: left !important;
+}
+
+table tbody tr:hover, .table tbody tr:hover {
+    background: var(--bg-main) !important;
+    transform: none !important;
+}
+
+table tr:last-child td, .table tr:last-child td {
+    border-bottom: none !important;
+}
+
+tr.selected {
+    background: var(--primary-light) !important;
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+}
+
+/* ==========================================================================
+   Buttons System (Vibrant Blue & Rounded Modern Pills)
+   ========================================================================== */
+
+.btn, button, .add, .edit, .delete {
+    border: none !important;
+    border-radius: var(--radius-md) !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease-in-out !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    box-shadow: var(--shadow-sm) !important;
+    text-decoration: none !important;
+}
+
+.btn:hover, button:hover, .add:hover, .edit:hover, .delete:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+/* Primary Button */
+.btn-primary, .add, button[type="submit"] {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover, .add:hover, button[type="submit"]:hover {
+    background: var(--primary-hover) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background: var(--primary-light) !important;
+    color: var(--primary-color) !important;
+    border: 1px solid var(--primary-border) !important;
+}
+
+.btn-secondary:hover {
+    background: #dbeafe !important;
+}
+
+/* Success Button */
+.btn-success {
+    background: #10b981 !important;
+    color: #ffffff !important;
+}
+
+.btn-success:hover {
+    background: #059669 !important;
+}
+
+/* Warning / Edit Button */
+.btn-warning, .edit {
+    background: #f59e0b !important;
+    color: #ffffff !important;
+}
+
+.btn-warning:hover, .edit:hover {
+    background: #d97706 !important;
+}
+
+/* Danger / Delete Button */
+.btn-danger, .delete {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+.btn-danger:hover, .delete:hover {
+    background: #dc2626 !important;
+}
+
+/* ==========================================================================
+   Form Controls & Inputs
+   ========================================================================== */
+
+form {
+    display: grid !important;
+    gap: 16px !important;
+}
+
+.form-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 18px !important;
+}
+
+input, select, textarea, .form-control, .form-select, .searchBox input, .search {
+    width: 100% !important;
+    padding: 10px 16px !important;
+    border-radius: var(--radius-md) !important;
+    border: 1px solid var(--border-color) !important;
+    background: var(--bg-card) !important;
+    font-size: 14px !important;
+    color: var(--text-main) !important;
+    transition: all 0.2s ease-in-out !important;
+    box-shadow: none !important;
+}
+
+input:focus, select:focus, textarea:focus, .form-control:focus, .form-select:focus {
+    outline: none !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    transform: none !important;
+}
+
+label {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+}
+
+/* ==========================================================================
+   Badges & Status Pills (Soft Rounded Style)
+   ========================================================================== */
+
+.badge, .status-badge {
+    padding: 6px 12px !important;
+    border-radius: var(--radius-pill) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.badge-success, .status-active, .status-available {
+    background: var(--status-success-bg) !important;
+    color: var(--status-success-text) !important;
+}
+
+.badge-warning, .status-pending, .status-due {
+    background: var(--status-warning-bg) !important;
+    color: var(--status-warning-text) !important;
+}
+
+.badge-danger, .status-borrowed, .status-overdue {
+    background: var(--status-danger-bg) !important;
+    color: var(--status-danger-text) !important;
+}
+
+/* ==========================================================================
+   Login & Standalone Centered Screen Layouts (Login & Logout)
+   ========================================================================== */
+
+.login-card, .box {
+    position: relative !important;
+    z-index: 10 !important;
+    width: 440px !important;
+    max-width: 90% !important;
+    padding: 40px !important;
+    border-radius: var(--radius-xl) !important;
+    background: var(--bg-card) !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-lg) !important;
+    margin: 60px auto !important;
+    text-align: center !important;
+}
+
+.login-card h2, .box h2, .box h3 {
+    color: var(--text-main) !important;
+    font-weight: 700 !important;
+    font-size: 24px !important;
+    margin-bottom: 24px !important;
+}
+
+.login-card p, .box p {
+    color: var(--text-muted) !important;
+    font-size: 14px !important;
+    margin-bottom: 24px !important;
+}
+
+.circle {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Modals
+   ========================================================================== */
+
+.modal-content {
+    border-radius: var(--radius-xl) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-lg) !important;
+    background: var(--bg-card) !important;
+    overflow: hidden !important;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-light) !important;
+    padding: 20px 24px !important;
+    background: var(--bg-main) !important;
+    color: var(--text-main) !important;
+}
+
+.modal-title {
+    color: var(--text-main) !important;
+    font-weight: 700 !important;
+}
+
+.modal-body {
+    padding: 24px !important;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-light) !important;
+    padding: 16px 24px !important;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+
+@media (max-width: 992px) {
+    .sidebar {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        border-right: none !important;
+        border-bottom: 1px solid var(--border-color) !important;
+    }
+
+    .content, .container, header + .container, header {
+        margin-left: 0 !important;
+        max-width: 100% !important;
+        padding: 20px 16px !important;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    table, .table {
+        display: block !important;
+        overflow-x: auto !important;
+    }
+}
+
+
+.options label{
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+.options label input[type="checkbox"]{
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 !important;
+    flex-shrink: 0;
+}
+
+
+.btn-container{
+    display:flex;
+    justify-content:center;
+    margin:20px 0;
+}
+
+.card{
+    padding:30px;
+}
+
+.form-grid{
+    margin-bottom:20px;
+}
+
+.search{
+    margin:20px 0;
+}
+
+table{
+    margin-top:15px;
+}
+
+.add-btn{
+    min-width: 220px;
+}
+
+.search{
+    width: 100%;
+    margin: 20px 0 25px;
+}
+
+.btn-container{
+    display:flex;
+    justify-content:center;
+    margin:25px 0;
+}
+
+.add{
+    min-width:220px;
+}
+
+.search{
+    width:100%;
+    margin:20px 0;
+}
+.book-btns{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin: 25px 0;
+}
+
+.book-btns button{
+    flex: 1;
+    max-width: 220px;
+    height: 45px;
+}
+

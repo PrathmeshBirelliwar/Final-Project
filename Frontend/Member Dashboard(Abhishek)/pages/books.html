@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Books | Library</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="../css/books.css">
+</head>
+<body>
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="logo"><i class="fa-solid fa-book-open"></i><span>Library</span></div>
+        <nav class="sidebar-menu">
+            <a href="dashboard.html" class="menu-item"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            <a href="books.html" class="menu-item active"><i class="fa-solid fa-book"></i><span>Browse Books</span></a>
+            <a href="borrowed-books.html" class="menu-item"><i class="fa-solid fa-book-open-reader"></i><span>Borrowed Books</span></a>
+            <a href="reservations.html" class="menu-item"><i class="fa-solid fa-bookmark"></i><span>Reservations</span></a>
+            <a href="history.html" class="menu-item"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
+            <a href="fines.html" class="menu-item"><i class="fa-solid fa-money-bill"></i><span>My Fines</span></a>
+            <a href="digital-library.html" class="menu-item"><i class="fa-solid fa-laptop"></i><span>Digital Library</span></a>
+            <a href="notifications.html" class="menu-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+            <a href="profile.html" class="menu-item"><i class="fa-solid fa-user"></i><span>My Profile</span></a>
+        </nav>
+        <div class="sidebar-bottom"><button class="logout-btn" type="button" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div class="search-box"><i class="fa-solid fa-magnifying-glass"></i><input id="bookSearch" type="search" placeholder="Search books, authors, ISBN..." aria-label="Search books"></div>
+            <div class="topbar-right"><a class="notification-btn" href="notifications.html" aria-label="Notifications"><i class="fa-solid fa-bell"></i><span class="notification-badge">0</span></a><div class="profile-mini"><div class="avatar">A</div><div><h4>Akshay</h4><p>Member</p></div></div></div>
+        </header>
+        <section class="book-content">
+            <section class="book-hero"><h1>Browse Books</h1><p>Explore our collection of books and discover your next great read.</p></section>
+            <div class="book-filters"><div class="category-filter">
+                <button class="filter-btn active" type="button" data-category="all">All Books</button>
+                <button class="filter-btn" type="button" data-category="programming">Programming</button>
+                <button class="filter-btn" type="button" data-category="database">Database</button>
+                <button class="filter-btn" type="button" data-category="fiction">Fiction</button>
+                <button class="filter-btn" type="button" data-category="artificial-intelligence">AI</button>
+                <button class="filter-btn" type="button" data-category="finance">Finance</button>
+            </div></div>
+            <div class="books-grid" id="booksGrid"></div>
+            <div id="booksEmptyState" class="empty-state" hidden><div class="empty-icon"><i class="fa-solid fa-book"></i></div><h2>No books found</h2><p>Try a different search or category.</p></div>
+        </section>
+    </main>
+</div>
+<script src="../js/books-data.js"></script>
+<script src="../js/library-store.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/books.js"></script>
+</body>
+</html>

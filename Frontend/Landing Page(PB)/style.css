@@ -1,0 +1,1201 @@
+/*==============================
+        GOOGLE FONT
+==============================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/*==============================
+        RESET
+==============================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+    font-family:'Poppins',sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    background:#F8FAFC;
+    color:#1F2937;
+    overflow-x:hidden;
+
+}
+
+img{
+
+    width:100%;
+    display:block;
+
+}
+
+a{
+
+    text-decoration:none;
+
+}
+
+ul{
+
+    list-style:none;
+
+}
+
+section{
+
+    width:100%;
+    padding:90px 8%;
+
+}
+
+/*==============================
+        REUSABLE
+==============================*/
+
+.section-title{
+
+    text-align:center;
+    margin-bottom:60px;
+
+}
+
+.section-title h2{
+
+    font-size:2.4rem;
+    color:#1E3A8A;
+    position:relative;
+    display:inline-block;
+
+}
+
+.section-title h2::after{
+
+    content:"";
+    position:absolute;
+
+    width:60%;
+    height:4px;
+
+    background:#2563EB;
+
+    left:20%;
+    bottom:-12px;
+
+    border-radius:10px;
+
+}
+
+/*==============================
+        NAVBAR
+==============================*/
+
+header{
+
+    position:fixed;
+    width:100%;
+    top:0;
+    left:0;
+
+    z-index:999;
+
+    background:rgba(255,255,255,.90);
+
+    backdrop-filter:blur(14px);
+
+    box-shadow:0 5px 20px rgba(0,0,0,.05);
+
+}
+
+.navbar{
+
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:18px 8%;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+}
+
+.logo{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+}
+
+.logo i{
+
+    color:#2563EB;
+    font-size:32px;
+
+}
+
+.logo h2{
+
+    font-size:28px;
+    color:#1F2937;
+    font-weight:700;
+
+}
+
+.logo span{
+
+    color:#2563EB;
+
+}
+
+.nav-links{
+
+    display:flex;
+    gap:45px;
+
+}
+
+.nav-links a{
+
+    color:#374151;
+
+    font-weight:500;
+
+    transition:.3s;
+
+    position:relative;
+
+}
+
+.nav-links a:hover{
+
+    color:#2563EB;
+
+}
+
+.nav-links a::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:0;
+
+    height:2px;
+
+    background:#2563EB;
+
+    left:0;
+    bottom:-6px;
+
+    transition:.3s;
+
+}
+
+.nav-links a:hover::after{
+
+    width:100%;
+
+}
+
+.login-btn{
+
+    padding:13px 28px;
+
+    border:none;
+
+    border-radius:30px;
+
+    background:#2563EB;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:.35s;
+
+}
+
+.login-btn:hover{
+
+    background:#1E40AF;
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 25px rgba(37,99,235,.25);
+
+}
+
+/*==============================
+        HERO
+==============================*/
+
+.hero{
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:60px;
+
+    padding-top:140px;
+
+}
+
+.hero-content{
+
+    flex:1;
+
+}
+
+.hero-content h1{
+
+    font-size:3.8rem;
+
+    line-height:1.2;
+
+    color:#0F172A;
+
+    margin-bottom:20px;
+
+}
+
+.hero-content h1 span{
+
+    color:#2563EB;
+
+}
+
+.hero-content p{
+
+    font-size:18px;
+
+    color:#64748B;
+
+    line-height:1.9;
+
+    margin-bottom:40px;
+
+    max-width:600px;
+
+}
+
+.hero-btn{
+
+    display:inline-block;
+
+    padding:16px 36px;
+
+    border-radius:50px;
+
+    background:#2563EB;
+
+    color:#fff;
+
+    font-weight:600;
+
+    transition:.35s;
+
+}
+
+.hero-btn:hover{
+
+    background:#1E40AF;
+
+    transform:translateY(-5px);
+
+    box-shadow:0 15px 30px rgba(37,99,235,.30);
+
+}
+
+.hero-image{
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+}
+
+.hero-image img{
+
+    max-width:650px;
+
+    animation:float 4s ease-in-out infinite;
+
+}
+
+/*==============================
+        FLOAT
+==============================*/
+
+@keyframes float{
+
+    0%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(-20px);
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*==============================
+        RESPONSIVE
+==============================*/
+
+@media(max-width:992px){
+
+    .hero{
+
+        flex-direction:column-reverse;
+
+        text-align:center;
+
+    }
+
+    .hero-content p{
+
+        margin:auto;
+        margin-bottom:35px;
+
+    }
+
+    .hero-content h1{
+
+        font-size:3rem;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .navbar{
+
+        flex-direction:column;
+
+        gap:20px;
+
+    }
+
+    .nav-links{
+
+        gap:25px;
+
+        flex-wrap:wrap;
+
+        justify-content:center;
+
+    }
+
+    .hero-content h1{
+
+        font-size:2.4rem;
+
+    }
+
+    .hero-content p{
+
+        font-size:16px;
+
+    }
+
+}
+
+/*====================================
+        ABOUT SECTION
+====================================*/
+
+.about{
+
+    background:#ffffff;
+
+}
+
+.about-container{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:70px;
+
+}
+
+.about-image{
+
+    flex:1;
+
+}
+
+.about-image img{
+
+    width:100%;
+    max-width:520px;
+    margin:auto;
+
+}
+
+.about-content{
+
+    flex:1;
+
+}
+
+.about-content p{
+
+    font-size:17px;
+    color:#475569;
+    line-height:2;
+    margin-bottom:25px;
+    text-align:justify;
+
+}
+
+/*====================================
+      LIBRARY INFORMATION
+====================================*/
+
+.library-info{
+
+    background:#F1F5F9;
+
+}
+
+.library-container{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(300px,1fr));
+
+    gap:35px;
+
+}
+
+.info-card{
+
+    background:#ffffff;
+
+    padding:40px 30px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    transition:.4s;
+
+    border:1px solid #E2E8F0;
+
+    box-shadow:
+    0 8px 25px rgba(0,0,0,.05);
+
+}
+
+.info-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:
+    0 20px 40px rgba(37,99,235,.15);
+
+}
+
+.info-card i{
+
+    font-size:55px;
+
+    color:#2563EB;
+
+    margin-bottom:25px;
+
+}
+
+.info-card h3{
+
+    font-size:24px;
+
+    color:#1E3A8A;
+
+    margin-bottom:18px;
+
+}
+
+.info-card p{
+
+    font-size:16px;
+
+    color:#64748B;
+
+    line-height:1.8;
+
+}
+
+/*====================================
+        RESPONSIVE
+====================================*/
+
+@media(max-width:992px){
+
+.about-container{
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+.about-content p{
+
+    text-align:center;
+
+}
+
+.about-image{
+
+    order:-1;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.info-card{
+
+    padding:35px 25px;
+
+}
+
+.info-card i{
+
+    font-size:45px;
+
+}
+
+.info-card h3{
+
+    font-size:21px;
+
+}
+
+.about-content p{
+
+    font-size:16px;
+
+}
+
+}
+
+/*====================================
+        WORKFLOW SECTION
+====================================*/
+
+.workflow{
+
+    background:#ffffff;
+
+}
+
+.workflow-container{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+
+}
+
+.step{
+
+    width:180px;
+
+    background:#ffffff;
+
+    border-radius:20px;
+
+    padding:35px 20px;
+
+    text-align:center;
+
+    border:1px solid #E2E8F0;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+
+    transition:.35s;
+
+    position:relative;
+
+}
+
+.step:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 20px 35px rgba(37,99,235,.15);
+
+}
+
+.step::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:5px;
+
+    background:#2563EB;
+
+    border-radius:20px 20px 0 0;
+
+}
+
+.step i{
+
+    width:75px;
+    height:75px;
+
+    background:#EFF6FF;
+
+    color:#2563EB;
+
+    border-radius:50%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    margin:auto;
+
+    font-size:30px;
+
+    margin-bottom:20px;
+
+}
+
+.step h4{
+
+    font-size:18px;
+
+    color:#1E293B;
+
+    font-weight:600;
+
+}
+
+.arrow{
+
+    color:#2563EB;
+
+    font-size:28px;
+
+}
+
+/*====================================
+        RESPONSIVE
+====================================*/
+
+@media(max-width:992px){
+
+.workflow-container{
+
+    flex-direction:column;
+
+}
+
+.arrow{
+
+    transform:rotate(90deg);
+
+}
+
+.step{
+
+    width:100%;
+    max-width:320px;
+
+}
+
+}
+
+/*====================================
+            LOGIN SECTION
+====================================*/
+
+.login-section{
+
+    background:#ffffff;
+
+}
+
+.login-container{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+    gap:35px;
+
+}
+
+.login-card{
+
+    background:linear-gradient(145deg,#2563EB,#1E40AF);
+
+    border-radius:22px;
+
+    padding:45px 30px;
+
+    text-align:center;
+
+    color:#ffffff;
+
+    transition:.4s;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.login-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:220px;
+    height:220px;
+
+    background:rgba(255,255,255,.08);
+
+    border-radius:50%;
+
+    top:-100px;
+    right:-100px;
+
+}
+
+.login-card:hover{
+
+    transform:translateY(-12px);
+
+    box-shadow:0 20px 45px rgba(30,64,175,.30);
+
+}
+
+.login-card i{
+
+    font-size:55px;
+
+    margin-bottom:25px;
+
+}
+
+.login-card h3{
+
+    font-size:28px;
+
+    margin-bottom:15px;
+
+}
+
+.login-card p{
+
+    font-size:15px;
+
+    opacity:.9;
+
+    margin-bottom:30px;
+
+}
+
+.login-card button{
+
+    background:#ffffff;
+
+    color:#2563EB;
+
+    border:none;
+
+    padding:14px 38px;
+
+    border-radius:40px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+.login-card button:hover{
+
+    background:#F59E0B;
+
+    color:#ffffff;
+
+    transform:scale(1.05);
+
+}
+
+/*====================================
+            RESPONSIVE
+====================================*/
+
+@media(max-width:768px){
+
+.role-card,
+.login-card{
+
+    padding:35px 25px;
+
+}
+
+.role-card h3{
+
+    font-size:22px;
+
+}
+
+.login-card h3{
+
+    font-size:24px;
+
+}
+
+.login-card i{
+
+    font-size:45px;
+
+}
+
+}
+
+/*====================================
+            FOOTER
+====================================*/
+
+footer{
+
+    background:#0F172A;
+
+    color:#ffffff;
+
+    text-align:center;
+
+    padding:50px 8%;
+
+}
+
+footer h3{
+
+    font-size:30px;
+
+    margin-bottom:15px;
+
+    font-weight:700;
+
+}
+
+footer p{
+
+    color:#CBD5E1;
+
+    font-size:15px;
+
+    margin:8px 0;
+
+    line-height:1.8;
+
+}
+
+/*====================================
+        SCROLL ANIMATION
+====================================*/
+
+.hero,
+.about,
+.library-info,
+.workflow,
+.roles,
+.login-section{
+
+    animation:fadeUp 1s ease;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*====================================
+        CUSTOM SCROLLBAR
+====================================*/
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#E2E8F0;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#2563EB;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#1E40AF;
+
+}
+
+/*====================================
+      BUTTON TRANSITIONS
+====================================*/
+
+button,
+.hero-btn,
+.login-btn{
+
+    transition:.35s ease;
+
+}
+
+button:active,
+.hero-btn:active,
+.login-btn:active{
+
+    transform:scale(.97);
+
+}
+
+/*====================================
+      IMAGE HOVER EFFECT
+====================================*/
+
+.about-image img,
+.hero-image img{
+
+    transition:.4s;
+
+}
+
+.about-image img:hover,
+.hero-image img:hover{
+
+    transform:scale(1.03);
+
+}
+
+/*====================================
+      RESPONSIVE (992px)
+====================================*/
+
+@media(max-width:992px){
+
+section{
+
+    padding:80px 6%;
+
+}
+
+.section-title h2{
+
+    font-size:2rem;
+
+}
+
+footer{
+
+    padding:40px 6%;
+
+}
+
+}
+
+/*====================================
+      RESPONSIVE (768px)
+====================================*/
+
+@media(max-width:768px){
+
+section{
+
+    padding:70px 5%;
+
+}
+
+.section-title{
+
+    margin-bottom:45px;
+
+}
+
+.section-title h2{
+
+    font-size:1.8rem;
+
+}
+
+footer h3{
+
+    font-size:24px;
+
+}
+
+footer p{
+
+    font-size:14px;
+
+}
+
+}
+
+/*====================================
+      RESPONSIVE (480px)
+====================================*/
+
+@media(max-width:480px){
+
+.logo h2{
+
+    font-size:22px;
+
+}
+
+.logo i{
+
+    font-size:24px;
+
+}
+
+.hero-content h1{
+
+    font-size:2rem;
+
+}
+
+.hero-content p{
+
+    font-size:15px;
+
+    line-height:1.7;
+
+}
+
+.hero-btn{
+
+    padding:14px 28px;
+
+    font-size:15px;
+
+}
+
+.login-btn{
+
+    padding:12px 22px;
+
+    font-size:14px;
+
+}
+
+.role-card,
+.login-card,
+.info-card{
+
+    padding:30px 20px;
+
+}
+
+}
+
+/*====================================
+      SCROLL REVEAL
+====================================*/
+
+.hidden{
+
+    opacity:0;
+
+    transform:translateY(50px);
+
+    transition:all .8s ease;
+
+}
+
+.show{
+
+    opacity:1;
+
+    transform:translateY(0);
+
+}
+
+/* Active Navbar Link */
+
+.nav-links a.active{
+
+    color:#2563EB;
+
+    font-weight:600;
+
+}
+
+

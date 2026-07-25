@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Borrowed Books | Library</title>
+
+
+    <!-- Google Font -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <!-- Main CSS -->
+
+    <link rel="stylesheet"
+          href="../css/style.css">
+
+
+    <!-- Responsive CSS -->
+
+    <link rel="stylesheet"
+          href="../css/responsive.css">
+
+
+    <!-- Borrowed Books CSS -->
+
+    <link rel="stylesheet"
+          href="../css/borrowed-books.css">
+
+</head>
+
+
+<body>
+
+
+<div class="app-container">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+            <i class="fa-solid fa-book-open"></i>
+
+            <span>Library</span>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+
+            <a href="dashboard.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="books.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-book"></i>
+
+                <span>Browse Books</span>
+
+            </a>
+
+
+            <a href="borrowed-books.html"
+               class="menu-item active">
+
+                <i class="fa-solid fa-book-open-reader"></i>
+
+                <span>Borrowed Books</span>
+
+            </a>
+
+
+            <a href="reservations.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-bookmark"></i>
+
+                <span>Reservations</span>
+
+            </a>
+
+
+            <a href="history.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                <span>History</span>
+
+            </a>
+
+
+            <a href="fines.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-money-bill"></i>
+
+                <span>My Fines</span>
+
+            </a>
+
+
+            <a href="digital-library.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-laptop"></i>
+
+                <span>Digital Library</span>
+
+            </a>
+
+
+            <a href="notifications.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-bell"></i>
+
+                <span>Notifications</span>
+
+            </a>
+
+
+            <a href="profile.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-user"></i>
+
+                <span>My Profile</span>
+
+            </a>
+
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+
+            <button class="logout-btn"
+                    onclick="logout()">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                <span>Logout</span>
+
+            </button>
+
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+
+            <div class="search-box">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                <input type="text"
+                       placeholder="Search books, authors, ISBN...">
+
+            </div>
+
+
+            <div class="topbar-right">
+
+
+                <button class="notification-btn">
+
+                    <i class="fa-solid fa-bell"></i>
+
+                    <span class="notification-badge">
+
+                        3
+
+                    </span>
+
+                </button>
+
+
+                <div class="profile-mini">
+
+
+                    <div class="avatar">
+
+                        A
+
+                    </div>
+
+
+                    <div>
+
+                        <h4>
+
+                            Akshay
+
+                        </h4>
+
+
+                        <p>
+
+                            Member
+
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+        <!-- ================= PAGE CONTENT ================= -->
+
+        <section class="borrowed-page">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="page-header">
+
+
+                <div>
+
+                    <h1>
+
+                        Borrowed Books
+
+                    </h1>
+
+
+                    <p>
+
+                        Manage your currently borrowed books and due dates.
+
+                    </p>
+
+                </div>
+
+
+                <a href="books.html"
+                   class="browse-btn">
+
+
+                    <i class="fa-solid fa-plus"></i>
+
+
+                    Borrow More Books
+
+
+                </a>
+
+
+            </div>
+
+
+            <!-- ================= SUMMARY CARDS ================= -->
+
+            <div class="borrow-summary">
+
+
+                <div class="summary-card">
+
+
+                    <div class="summary-icon blue">
+
+                        <i class="fa-solid fa-book-open"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+
+                            Currently Borrowed
+
+                        </span>
+
+
+                        <strong id="totalBorrowed">
+
+                            0
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="summary-card">
+
+
+                    <div class="summary-icon orange">
+
+                        <i class="fa-solid fa-calendar-days"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+
+                            Due Soon
+
+                        </span>
+
+
+                        <strong id="dueSoon">
+
+                            0
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="summary-card">
+
+
+                    <div class="summary-icon green">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+
+                            On Time
+
+                        </span>
+
+
+                        <strong id="onTime">
+
+                            0
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================= FILTERS ================= -->
+
+            <div class="borrow-toolbar">
+
+
+                <div class="filter-tabs">
+
+
+                    <button class="filter-tab active" data-filter="all">
+
+                        All Books
+
+                    </button>
+
+
+                    <button class="filter-tab" data-filter="due">
+
+                        Due Soon
+
+                    </button>
+
+
+                    <button class="filter-tab" data-filter="overdue">
+
+                        Overdue
+
+                    </button>
+
+
+                </div>
+
+
+                <div class="borrow-search">
+
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                    <input type="text"
+                           id="borrowSearch"
+                           placeholder="Search borrowed books...">
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================= BOOK LIST ================= -->
+
+            <div id="borrowedBooksList"
+                 class="borrowed-books-list">
+
+
+            </div>
+
+
+            <!-- EMPTY STATE -->
+
+            <div id="emptyState"
+                 class="empty-state">
+
+
+                <div class="empty-icon">
+
+                    <i class="fa-solid fa-book-open"></i>
+
+                </div>
+
+
+                <h2>
+
+                    No Borrowed Books
+
+                </h2>
+
+
+                <p>
+
+                    You have not borrowed any books yet.
+
+                </p>
+
+
+                <a href="books.html"
+                   class="browse-btn">
+
+                    Browse Books
+
+                </a>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+<script src="../js/books-data.js"></script>
+<script src="../js/library-store.js"></script>
+<script src="../js/app.js"></script>
+
+<script src="../js/borrowed-books.js"></script>
+
+
+</body>
+
+</html>

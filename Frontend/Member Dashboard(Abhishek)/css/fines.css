@@ -1,0 +1,338 @@
+.fines-page {
+
+    padding: 36px;
+
+    max-width: 1500px;
+
+    margin: auto;
+
+}
+
+
+.eyebrow {
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    color: var(--primary-color);
+
+}
+
+
+.page-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 32px;
+
+}
+
+
+.page-header h1 {
+
+    font-size: 32px;
+
+    margin: 8px 0;
+
+}
+
+
+.page-header p {
+
+    color: var(--text-light);
+
+}
+
+
+.pay-btn {
+
+    border: none;
+
+    background: var(--primary-color);
+
+    color: white;
+
+    padding: 13px 20px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+}
+
+
+.finance-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+
+    margin-bottom: 28px;
+
+}
+
+
+.finance-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 25px;
+
+    background: white;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 16px;
+
+}
+
+
+.finance-icon {
+
+    width: 52px;
+
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 13px;
+
+    font-size: 20px;
+
+}
+
+
+.finance-icon.danger {
+
+    background: #fff1f2;
+
+    color: #e11d48;
+
+}
+
+
+.finance-icon.success {
+
+    background: #ecfdf5;
+
+    color: #059669;
+
+}
+
+
+.finance-icon.neutral {
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+}
+
+
+.finance-card span {
+
+    color: var(--text-light);
+
+    font-size: 13px;
+
+}
+
+
+.finance-card h2 {
+
+    margin: 5px 0;
+
+}
+
+
+.finance-card small {
+
+    color: var(--text-light);
+
+}
+
+
+.content-card {
+
+    background: white;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+}
+
+
+.card-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 24px;
+
+    border-bottom: 1px solid var(--border-color);
+
+}
+
+
+.card-header h2 {
+
+    margin-bottom: 5px;
+
+}
+
+
+.card-header p {
+
+    color: var(--text-light);
+
+    font-size: 13px;
+
+}
+
+
+.card-header select {
+
+    padding: 10px 15px;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 8px;
+
+}
+
+
+.table-wrapper {
+
+    overflow-x: auto;
+
+}
+
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+}
+
+
+th {
+
+    text-align: left;
+
+    padding: 16px 24px;
+
+    font-size: 11px;
+
+    color: var(--text-light);
+
+    letter-spacing: .5px;
+
+}
+
+
+td {
+
+    padding: 18px 24px;
+
+    border-top: 1px solid var(--border-color);
+
+    font-size: 14px;
+
+}
+
+
+.status {
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+
+.status.pending {
+
+    color: #c2410c;
+
+    background: #fff7ed;
+
+}
+
+
+.status.paid {
+
+    color: #15803d;
+
+    background: #f0fdf4;
+
+}
+
+
+.action-btn {
+
+    border: none;
+
+    background: transparent;
+
+    color: var(--primary-color);
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+}
+
+.completed-payment { color: #15803d; font-size: 13px; }
+
+.payment-modal {
+    position: fixed; inset: 0; z-index: 1000; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(15, 23, 42, .48);
+}
+.payment-modal.open { display: flex; }
+.payment-dialog {
+    position: relative; width: min(100%, 430px); padding: 32px;
+    border-radius: 18px; background: #fff; box-shadow: 0 24px 60px rgba(15, 23, 42, .24);
+}
+.modal-close { position: absolute; top: 12px; right: 16px; border: 0; background: transparent; color: #64748b; font-size: 28px; cursor: pointer; }
+.payment-icon { width: 46px; height: 46px; display: grid; place-items: center; color: var(--primary-color); background: #eff6ff; border-radius: 12px; }
+.payment-dialog h2 { margin: 16px 0 6px; font-size: 22px; }
+.payment-dialog p { color: var(--text-light); font-size: 14px; }
+.payment-amount { margin: 20px 0; font-size: 30px; font-weight: 700; color: #0f172a; }
+.payment-label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 600; }
+.payment-dialog select { width: 100%; padding: 11px; border: 1px solid var(--border-color); border-radius: 8px; font: inherit; }
+.payment-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.cancel-payment, .confirm-payment { border: 0; border-radius: 8px; padding: 11px 16px; font: inherit; font-weight: 600; cursor: pointer; }
+.cancel-payment { color: #475569; background: #f1f5f9; }
+.confirm-payment { color: #fff; background: var(--primary-color); }

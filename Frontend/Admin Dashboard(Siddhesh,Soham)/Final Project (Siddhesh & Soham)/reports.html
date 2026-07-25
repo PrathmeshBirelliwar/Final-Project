@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Reports</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- Custom Theme CSS -->
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+@media print {
+    .sidebar, .btn {
+        display: none !important;
+    }
+    .content, .container {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+}
+</style>
+
+<script src="js/db.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body>
+
+<div class="sidebar">
+<h3>Library Admin</h3>
+
+<a href="admin_page.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="manage_librarians.html"><i class="bi bi-person-workspace"></i> Manage Librarians</a>
+<a href="manage_books.html"><i class="bi bi-book"></i> Manage Books</a>
+<a href="manage_members.html"><i class="bi bi-people"></i> Manage Members</a>
+<a href="reports.html"><i class="bi bi-file-earmark-bar-graph"></i> Reports</a>
+<a href="fine_collection.html"><i class="bi bi-cash-stack"></i> Fine Collection</a>
+<a href="backup.html"><i class="bi bi-database"></i> Backup Database</a>
+<a href="logout.html"><i class="bi bi-box-arrow-right"></i> Logout</a>
+</div>
+
+<div class="content">
+
+<h2>Library Reports</h2>
+
+<div class="row mt-4">
+
+<div class="col-md-3">
+<div class="card text-center p-4">
+<i class="bi bi-book fs-1 text-primary"></i>
+<div class="report-title mt-2">Total Books</div>
+<h2 id="reportTotalBooks">0</h2>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card text-center p-4">
+<i class="bi bi-journal-check fs-1 text-success"></i>
+<div class="report-title mt-2">Issued Books</div>
+<h2 id="reportIssuedBooks">0</h2>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card text-center p-4">
+<i class="bi bi-arrow-return-left fs-1 text-warning"></i>
+<div class="report-title mt-2">Returned Books</div>
+<h2 id="reportReturnedBooks">0</h2>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card text-center p-4">
+<i class="bi bi-clock-history fs-1 text-danger"></i>
+<div class="report-title mt-2">Overdue Books</div>
+<h2 id="reportOverdueBooks">0</h2>
+</div>
+</div>
+
+</div>
+
+<div class="card mt-4 p-4">
+
+<h4>Monthly Report Summary</h4>
+
+<table class="table table-bordered table-striped mt-3">
+
+<thead class="table-dark">
+<tr>
+<th>Month</th>
+<th>Books Added</th>
+<th>Books Issued</th>
+<th>Books Returned</th>
+<th>New Members</th>
+<th>Fine Collected</th>
+</tr>
+</thead>
+
+<tbody id="reportTableBody">
+</tbody>
+
+</table>
+
+<div class="mt-3">
+<button class="btn btn-primary" onclick="downloadReport()">
+<i class="bi bi-download"></i> Download Report
+</button>
+
+<button class="btn btn-success" onclick="printReport()">
+<i class="bi bi-printer"></i> Print Report
+</button>
+</div>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+function renderReports() {
+    if (!window.DB) return;
+
+    const stats = window.DB.getStats();
+
+    document.getElementById("reportTotalBooks").innerText = stats.totalBooks;
+    document.getElementById("reportIssuedBooks").innerText = stats.issuedBooks;
+    document.getElementById("reportReturnedBooks").innerText = stats.returnedBooks;
+    document.getElementById("reportOverdueBooks").innerText = stats.pendingReturns;
+
+    const monthlyData = [
+        { month: "January", added: 40, issued: 120, returned: 110, members: 20, fine: 1000 },
+        { month: "February", added: 30, issued: 98, returned: 92, members: 15, fine: 850 },
+        { month: "Current Month", added: stats.totalBooks, issued: stats.issuedBooks, returned: stats.returnedBooks, members: stats.totalMembers, fine: stats.totalCollectedFines }
+    ];
+
+    const tbody = document.getElementById("reportTableBody");
+    tbody.innerHTML = "";
+
+    monthlyData.forEach(m => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${m.month}</td>
+            <td>${m.added}</td>
+            <td>${m.issued}</td>
+            <td>${m.returned}</td>
+            <td>${m.members}</td>
+            <td>₹${m.fine.toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function downloadReport(){
+
+    const stats = window.DB.getStats();
+    const now = new Date().toLocaleString();
+
+    let report=`SMART LIBRARY MANAGEMENT SYSTEM - REALTIME REPORT
+Generated On: ${now}
+=====================================================
+
+SYSTEM SUMMARY:
+- Total Books Registered : ${stats.totalBooks}
+- Total Members         : ${stats.totalMembers}
+- Total Librarians      : ${stats.totalLibrarians}
+- Currently Issued Books: ${stats.issuedBooks}
+- Returned Books        : ${stats.returnedBooks}
+- Overdue Books         : ${stats.pendingReturns}
+- Total Fine Collected  : ₹${stats.totalCollectedFines.toLocaleString()}
+- Pending Fines         : ₹${stats.pendingFines.toLocaleString()}
+
+-----------------------------------------------------
+MONTHLY PERFORMANCE SUMMARY:
+-----------------------------------------------------
+
+[January]
+- Books Added   : 40
+- Books Issued  : 120
+- Books Returned: 110
+- New Members   : 20
+- Fine Collected: ₹1,000
+
+[February]
+- Books Added   : 30
+- Books Issued  : 98
+- Books Returned: 92
+- New Members   : 15
+- Fine Collected: ₹850
+
+[Current Month (Live System Data)]
+- Books Added   : ${stats.totalBooks}
+- Books Issued  : ${stats.issuedBooks}
+- Books Returned: ${stats.returnedBooks}
+- New Members   : ${stats.totalMembers}
+- Fine Collected: ₹${stats.totalCollectedFines.toLocaleString()}
+
+=====================================================
+Report generated dynamically by Smart Library System
+`;
+
+    let blob = new Blob([report], { type: "text/plain" });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Library_Report_${new Date().toISOString().slice(0,10)}.txt`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+
+}
+
+function printReport(){
+    window.print();
+}
+
+document.addEventListener("DOMContentLoaded", renderReports);
+
+</script>
+
+</body>
+</html>

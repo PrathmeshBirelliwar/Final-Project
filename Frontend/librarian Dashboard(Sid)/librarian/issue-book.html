@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Issue Book</title>
+
+    <!-- Google Font -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+
+    <link rel="stylesheet"
+          href="css/issue-book.css">
+
+</head>
+
+<body>
+
+<div class="issue-page">    <!-- ================= Sidebar ================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <i class="fa-solid fa-book-open-reader"></i>
+
+            <h2>LibraryMS</h2>
+
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <ul>
+
+                <li>
+
+                    <a href="index.html">
+
+                        <i class="fa-solid fa-house"></i>
+
+                        <span>Dashboard</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="books.html">
+
+                        <i class="fa-solid fa-book"></i>
+
+                        <span>Books</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="students.html">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        <span>Students</span>
+
+                    </a>
+
+                </li>
+
+                <li class="active">
+
+                    <a href="issue-book.html">
+
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
+                        <span>Issue Book</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="return-book.html">
+
+                        <i class="fa-solid fa-rotate-left"></i>
+
+                        <span>Return Book</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="fine.html">
+
+                        <i class="fa-solid fa-money-bill-wave"></i>
+
+                        <span>Fine</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="reports.html">
+
+                        <i class="fa-solid fa-chart-line"></i>
+
+                        <span>Reports</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="settings.html">
+
+                        <i class="fa-solid fa-gear"></i>
+
+                        <span>Settings</span>
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <a href="#">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside><!-- ================= Main Content ================= -->
+
+<main class="issue-content">
+
+    <!-- Page Header -->
+
+    <section class="issue-header">
+
+        <div class="header-text">
+
+            <h1>Issue Book</h1>
+
+            <p>Issue books to registered students.</p>
+
+        </div>
+
+        <button class="issue-book-btn">
+
+            <i class="fa-solid fa-plus"></i>
+
+            New Issue
+
+        </button>
+
+    </section>
+
+    <!-- Search -->
+
+    <section class="search-section">
+
+        <div class="issue-search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="searchIssue"
+                placeholder="Search by student, book or issue ID">
+
+        </div>
+
+    </section>    <!-- ================= Issue Records ================= -->
+
+    <section class="issue-table-section">
+
+       <div class="table-header">
+
+        <span>Total issued: <span id="totalIssuedCount">0</span>
+
+    </div>
+
+        <table class="issue-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Issue ID</th>
+
+                    <th>Student</th>
+
+                    <th>Book</th>
+
+                    <th>Issue Date</th>
+
+                    <th>Return Date</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>IS001</td>
+
+                    <td>Rahul Sharma</td>
+
+                    <td>Python Programming</td>
+
+                    <td>21 Jul 2026</td>
+
+                    <td>28 Jul 2026</td>
+
+                    <td>
+
+                        <span class="status issued">
+
+                            Issued
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button class="view-btn">
+
+                            <i class="fa-solid fa-eye"></i>
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>IS002</td>
+
+                    <td>Sneha Patil</td>
+
+                    <td>Java Fundamentals</td>
+
+                    <td>20 Jul 2026</td>
+
+                    <td>27 Jul 2026</td>
+
+                    <td>
+
+                        <span class="status returned">
+
+                            Returned
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button class="view-btn">
+
+                            <i class="fa-solid fa-eye"></i>
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>IS003</td>
+
+                    <td>Amit Joshi</td>
+
+                    <td>Database Systems</td>
+
+                    <td>18 Jul 2026</td>
+
+                    <td>25 Jul 2026</td>
+
+                    <td>
+
+                        <span class="status overdue">
+
+                            Overdue
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button class="view-btn">
+
+                            <i class="fa-solid fa-eye"></i>
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>    <!-- ================= Issue Book Modal ================= -->
+
+    <div class="modal-overlay" id="issueBookModal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <h2>Issue New Book</h2>
+
+                <button class="close-modal-btn" id="closeIssueModal">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+            <form class="issue-form" id="issueForm">
+
+                <div class="form-group">
+
+                    <label>Select Student</label>
+
+                     <select id="studentSelect">
+
+    <option value="">Select Student</option>
+
+</select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Select Book</label>
+
+                    <select id="bookSelect">
+
+    <option value="">Select Book</option>
+
+</select>
+
+                </div>
+
+                <!-- Student Information -->
+
+                <div class="info-card">
+
+                    <h4>Student Details</h4>
+
+                    <p><strong>ID:</strong> <span id="displayStudentId">-</span></p>
+
+                    <p><strong>Name:</strong> <span id="displayStudentName">-</span></p>
+
+                    <p><strong>Course:</strong> <span id="displayStudentCourse">-</span></p>
+
+                </div>
+
+                <!-- Book Information -->
+
+                <div class="info-card">
+
+                    <h4>Book Details</h4>
+
+                    <p><strong>Book ID:</strong> <span id="displayBookId">-</span></p>
+
+                    <p><strong>Author:</strong> <span id="displayAuthor">-</span></p>
+
+                    <p><strong>Available Copies:</strong> <span id="displayCopies">-</span></p>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Issue Date</label>
+
+                    <input
+                        type="date"
+                        id="issueDate">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Return Date</label>
+
+                    <input
+                        type="date"
+                        id="returnDate">
+
+                </div>
+
+                <div class="form-buttons">
+
+                    <button
+                        type="button"
+                        class="cancel-btn">
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="save-btn">
+
+                        Issue Book
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>    <!-- ================= Footer ================= -->
+
+    <footer class="issue-footer">
+
+        <p>
+
+            © 2026 Library Management System | Issue Book Management
+
+        </p>
+
+    </footer>
+
+</main>
+
+</div>
+
+<!-- Bootstrap JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Shared Database -->
+
+<script src="data/library-data.js"></script>
+
+<!-- JavaScript -->
+
+<script src="js\issue-book.js"></script>
+
+</body>
+
+</html>

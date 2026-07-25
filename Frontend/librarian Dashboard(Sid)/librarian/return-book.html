@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Return Book</title>
+
+    <!-- Google Font -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+
+    <link rel="stylesheet"
+          href="css/return-book.css">
+
+</head>
+
+<body>
+
+<div class="return-page">    <!-- ================= Sidebar ================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <i class="fa-solid fa-book-open-reader"></i>
+
+            <h2>LibraryMS</h2>
+
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <ul>
+
+                <li>
+
+                    <a href="index.html">
+
+                        <i class="fa-solid fa-house"></i>
+
+                        <span>Dashboard</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="books.html">
+
+                        <i class="fa-solid fa-book"></i>
+
+                        <span>Books</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="students.html">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        <span>Students</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="issue-book.html">
+
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
+                        <span>Issue Book</span>
+
+                    </a>
+
+                </li>
+
+                <li class="active">
+
+                    <a href="return-book.html">
+
+                        <i class="fa-solid fa-rotate-left"></i>
+
+                        <span>Return Book</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="fine.html">
+
+                        <i class="fa-solid fa-money-bill-wave"></i>
+
+                        <span>Fine</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="reports.html">
+
+                        <i class="fa-solid fa-chart-line"></i>
+
+                        <span>Reports</span>
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="settings.html">
+
+                        <i class="fa-solid fa-gear"></i>
+
+                        <span>Settings</span>
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <a href="#">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside><!-- ================= Main Content ================= -->
+
+<main class="return-content">
+
+    <!-- Page Header -->
+
+    <section class="return-header">
+
+        <div class="header-text">
+
+            <h1>Return Book</h1>
+
+            <p>Manage returned books and calculate overdue fines.</p>
+
+        </div>
+
+        <button class="return-book-btn">
+
+            <i class="fa-solid fa-book"></i>
+
+            Return Book
+
+        </button>
+
+    </section>
+
+    <!-- Search -->
+
+    <section class="search-section">
+
+        <div class="return-search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="searchReturn"
+                placeholder="Search by student, book or issue ID">
+
+        </div>
+
+    </section>    <!-- ================= Return Records ================= -->
+
+    <section class="return-table-section">
+
+      <div class="table-header">
+
+        <span>returns pending: <span id="totalpendingCount">0</span>
+
+    </div>
+
+        <table class="return-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Issue ID</th>
+
+                    <th>Student</th>
+
+                    <th>Book</th>
+
+                    <th>Issue Date</th>
+
+                    <th>Due Date</th>
+
+                    <th>Fine</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>IS001</td>
+
+                    <td>Rahul Sharma</td>
+
+                    <td>Python Programming</td>
+
+                    <td>21 Jul 2026</td>
+
+                    <td>28 Jul 2026</td>
+
+                    <td>₹15</td>
+
+                    <td>
+
+                        <span class="status overdue">
+
+                            Overdue
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button class="return-btn">
+
+                            <i class="fa-solid fa-rotate-left"></i>
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>IS002</td>
+
+                    <td>Sneha Patil</td>
+
+                    <td>Java Fundamentals</td>
+
+                    <td>20 Jul 2026</td>
+
+                    <td>27 Jul 2026</td>
+
+                    <td>₹0</td>
+
+                    <td>
+
+                        <span class="status issued">
+
+                            Issued
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button class="return-btn">
+
+                            <i class="fa-solid fa-rotate-left"></i>
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>IS003</td>
+
+                    <td>Amit Joshi</td>
+
+                    <td>Database Systems</td>
+
+                    <td>18 Jul 2026</td>
+
+                    <td>25 Jul 2026</td>
+
+                    <td>₹30</td>
+
+                    <td>
+
+                        <span class="status overdue">
+
+                            Overdue
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button class="return-btn">
+
+                            <i class="fa-solid fa-rotate-left"></i>
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>    <!-- ================= Return Book Modal ================= -->
+
+    <div class="modal-overlay" id="returnBookModal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <h2>Return Book</h2>
+
+                <button class="close-modal-btn" id="closeReturnModal">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+            <form class="return-form" id="returnForm">
+
+                <div class="info-card">
+
+                    <h4>Student Information</h4>
+
+                    <p><strong>Student:</strong> <span id="returnStudent">Rahul Sharma</span></p>
+                    <p><strong>Issue ID:</strong> <span id="returnIssueId">IS001</span></p>
+                    <p><strong>Course:</strong> <span id="returnCourse">B.E Computer</span></p>
+
+                </div>
+
+                <div class="info-card">
+
+                    <h4>Book Information</h4>
+
+                    <p><strong>Book:</strong> <span id="returnBook">Python Programming</span></p>
+                    <p><strong>Author:</strong> <span id="returnAuthor">Mark Lutz</span></p>
+                    <p><strong>Book ID:</strong> <span id="returnBookId">BK001</span></p>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Issue Date</label>
+
+                    <input
+                        type="date"
+                        id="issueDate"
+                        readonly>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Due Date</label>
+
+                    <input
+                        type="date"
+                        id="dueDate"
+                        readonly>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Return Date</label>
+
+                    <input
+                        type="date"
+                        id="actualReturnDate">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Late Days</label>
+
+                    <input
+                        type="number"
+                        id="lateDays"
+                        readonly>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Fine Amount (₹)</label>
+
+                    <input
+                        type="number"
+                        id="fineAmount"
+                        readonly>
+
+                </div>
+
+                <div class="form-buttons">
+
+                    <button
+                        type="button"
+                        class="cancel-btn">
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="save-btn">
+
+                        Confirm Return
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>    <!-- ================= Footer ================= -->
+
+    <footer class="return-footer">
+
+        <p>
+
+            © 2026 Library Management System | Return Book Management
+
+        </p>
+
+    </footer>
+
+</main>
+
+</div>
+
+<!-- Bootstrap JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Shared Database -->
+
+<script src="data/library-data.js"></script>
+
+<!-- JavaScript -->
+
+<script src="js/return-book.js"></script>
+
+</body>
+
+</html>

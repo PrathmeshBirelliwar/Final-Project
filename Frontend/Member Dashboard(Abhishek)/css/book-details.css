@@ -1,0 +1,742 @@
+/* =========================
+   BOOK DETAILS PAGE
+========================= */
+
+.book-details-page {
+
+    padding: 30px 35px;
+
+    max-width: 1400px;
+
+    margin: auto;
+
+}
+
+
+/* =========================
+   BREADCRUMB
+========================= */
+
+.breadcrumb {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+    font-size: 14px;
+
+    color: var(--text-light);
+
+}
+
+
+.breadcrumb a {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--primary-color);
+
+    text-decoration: none;
+
+    font-weight: 500;
+
+}
+
+
+.breadcrumb a:hover {
+
+    text-decoration: underline;
+
+}
+
+
+/* =========================
+   MAIN DETAILS CARD
+========================= */
+
+.book-details-card {
+
+    display: grid;
+
+    grid-template-columns: 340px 1fr;
+
+    gap: 50px;
+
+    padding: 35px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 18px;
+
+}
+
+
+/* =========================
+   COVER
+========================= */
+
+.details-cover-section {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+}
+
+
+.details-cover {
+
+    width: 280px;
+
+    height: 390px;
+
+    overflow: hidden;
+
+    border-radius: 12px;
+
+    background: var(--primary-light);
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+
+}
+
+
+.details-cover img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+.cover-actions {
+
+    width: 280px;
+
+    margin-top: 20px;
+
+}
+
+
+.secondary-action {
+
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 8px;
+
+    background: var(--white);
+
+    color: var(--text-dark);
+
+    font-family: inherit;
+
+    cursor: pointer;
+
+}
+
+
+.secondary-action:hover {
+
+    border-color: var(--primary-color);
+
+    color: var(--primary-color);
+
+}
+
+
+/* =========================
+   INFORMATION
+========================= */
+
+.book-information {
+
+    padding-top: 5px;
+
+}
+
+
+.book-category {
+
+    display: inline-block;
+
+    padding: 6px 12px;
+
+    border-radius: 20px;
+
+    background: var(--primary-light);
+
+    color: var(--primary-color);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+
+}
+
+
+.book-information h1 {
+
+    margin: 15px 0 5px;
+
+    font-size: clamp(28px, 4vw, 42px);
+
+    line-height: 1.2;
+
+}
+
+
+.book-author {
+
+    color: var(--text-light);
+
+    margin-bottom: 15px;
+
+}
+
+
+.book-author strong {
+
+    color: var(--text-dark);
+
+}
+
+
+/* =========================
+   RATING
+========================= */
+
+.book-rating {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.stars {
+
+    color: #f59e0b;
+
+}
+
+
+.book-rating > span {
+
+    font-weight: 600;
+
+}
+
+
+.review-count {
+
+    color: var(--text-light);
+
+    font-size: 13px;
+
+    font-weight: 400 !important;
+
+}
+
+
+/* =========================
+   DESCRIPTION
+========================= */
+
+.book-description-section {
+
+    max-width: 800px;
+
+}
+
+
+.book-description-section h3 {
+
+    margin-bottom: 8px;
+
+    font-size: 18px;
+
+}
+
+
+.book-description-section p {
+
+    color: var(--text-light);
+
+    line-height: 1.8;
+
+}
+
+
+/* =========================
+   META INFORMATION
+========================= */
+
+.book-meta-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 15px;
+
+    margin: 25px 0;
+
+}
+
+
+.meta-item {
+
+    padding: 14px;
+
+    background: var(--background);
+
+    border-radius: 10px;
+
+}
+
+
+.meta-item span {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--text-light);
+
+    font-size: 12px;
+
+}
+
+
+.meta-item span i {
+
+    margin-right: 5px;
+
+    color: var(--primary-color);
+
+}
+
+
+.meta-item strong {
+
+    font-size: 14px;
+
+}
+
+
+/* =========================
+   AVAILABILITY
+========================= */
+
+.availability-box {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.available-box {
+
+    background: #f0fdf4;
+
+    border: 1px solid #bbf7d0;
+
+}
+
+
+.availability-icon {
+
+    font-size: 24px;
+
+    color: #16a34a;
+
+}
+
+
+.availability-box strong {
+
+    display: block;
+
+    color: #166534;
+
+}
+
+
+.availability-box p {
+
+    margin-top: 3px;
+
+    color: #4d7c0f;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.book-actions {
+
+    display: flex;
+
+    gap: 12px;
+
+}
+
+
+.borrow-btn,
+
+.reserve-main-btn {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 13px 22px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+}
+
+
+.borrow-btn {
+
+    background: var(--primary-color);
+
+    color: white;
+
+}
+
+
+.borrow-btn:hover {
+
+    opacity: 0.9;
+
+}
+
+
+.reserve-main-btn {
+
+    background: #f59e0b;
+
+    color: white;
+
+}
+
+
+.hidden {
+
+    display: none;
+
+}
+
+
+/* =========================
+   ADDITIONAL DETAILS
+========================= */
+
+.additional-details {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 20px;
+
+    margin-top: 25px;
+
+}
+
+
+.info-panel {
+
+    padding: 25px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 14px;
+
+}
+
+
+.panel-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.panel-heading i {
+
+    color: var(--primary-color);
+
+    font-size: 20px;
+
+}
+
+
+.panel-heading h2 {
+
+    font-size: 18px;
+
+}
+
+
+/* =========================
+   LIBRARY INFO
+========================= */
+
+.library-info-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+
+}
+
+
+.library-info-list > div {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid var(--border-color);
+
+}
+
+
+.library-info-list span {
+
+    color: var(--text-light);
+
+    font-size: 13px;
+
+}
+
+
+.library-info-list strong {
+
+    font-size: 13px;
+
+    text-align: right;
+
+}
+
+
+.available-text {
+
+    color: #16a34a;
+
+}
+
+
+/* =========================
+   BORROWING RULES
+========================= */
+
+.rules-list {
+
+    list-style: none;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+
+}
+
+
+.rules-list li {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: var(--text-light);
+
+    font-size: 13px;
+
+}
+
+
+.rules-list i {
+
+    color: #16a34a;
+
+}
+
+
+/* =========================
+   RELATED BOOKS
+========================= */
+
+.related-section {
+
+    margin-top: 35px;
+
+}
+
+
+.section-heading {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.section-heading h2 {
+
+    font-size: 22px;
+
+}
+
+
+.section-heading p {
+
+    color: var(--text-light);
+
+    font-size: 13px;
+
+}
+
+
+.section-heading a {
+
+    color: var(--primary-color);
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+}
+
+
+.related-books {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+
+}
+
+
+.related-book {
+
+    padding: 15px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 12px;
+
+}
+
+
+.related-book img {
+
+    width: 100%;
+
+    height: 220px;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+}
+
+
+.related-book h3 {
+
+    margin-top: 12px;
+
+    font-size: 15px;
+
+}
+
+
+.related-book p {
+
+    margin-top: 5px;
+
+    color: var(--text-light);
+
+    font-size: 13px;
+
+}

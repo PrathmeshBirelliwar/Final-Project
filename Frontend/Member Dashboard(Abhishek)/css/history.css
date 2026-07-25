@@ -1,0 +1,237 @@
+.history-page {
+
+    padding: 30px 35px;
+
+    max-width: 1400px;
+
+    margin: auto;
+
+}
+
+
+.page-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+
+}
+
+
+.page-header h1 {
+
+    font-size: 30px;
+
+}
+
+
+.page-header p {
+
+    color: var(--text-light);
+
+    margin-top: 5px;
+
+}
+
+
+.history-count {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px 18px;
+
+    background: var(--primary-light);
+
+    color: var(--primary-color);
+
+    border-radius: 8px;
+
+    font-weight: 500;
+
+}
+
+
+.history-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+
+}
+
+
+.history-card {
+
+    display: grid;
+
+    grid-template-columns: 70px 1fr auto;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 20px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 14px;
+
+}
+
+
+.history-icon {
+
+    width: 65px;
+
+    height: 85px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #f0fdf4;
+
+    color: #16a34a;
+
+    border-radius: 8px;
+
+    font-size: 25px;
+
+}
+
+
+.history-info h3 {
+
+    font-size: 17px;
+
+    margin-bottom: 5px;
+
+}
+
+
+.history-info p {
+
+    color: var(--text-light);
+
+    font-size: 13px;
+
+}
+
+
+.history-dates {
+
+    display: flex;
+
+    gap: 25px;
+
+    margin-top: 12px;
+
+}
+
+
+.history-dates span {
+
+    display: block;
+
+    color: var(--text-light);
+
+    font-size: 11px;
+
+    margin-bottom: 4px;
+
+}
+
+
+.history-dates strong {
+
+    font-size: 13px;
+
+}
+
+
+.returned-status {
+
+    padding: 6px 12px;
+
+    border-radius: 20px;
+
+    background: #f0fdf4;
+
+    color: #15803d;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+
+.empty-state {
+
+    display: none;
+
+    text-align: center;
+
+    padding: 80px 20px;
+
+}
+
+
+.empty-state > i {
+
+    font-size: 50px;
+
+    color: var(--primary-color);
+
+}
+
+
+.empty-state h2 {
+
+    margin: 20px 0 8px;
+
+}
+
+
+.empty-state p {
+
+    color: var(--text-light);
+
+    margin-bottom: 20px;
+
+}
+
+
+.browse-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 12px 18px;
+
+    background: var(--primary-color);
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 8px;
+
+}

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Borrowing History | Library</title>
+
+    <link rel="stylesheet"
+          href="../css/style.css">
+
+    <link rel="stylesheet"
+          href="../css/responsive.css">
+
+    <link rel="stylesheet"
+          href="../css/history.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+
+<body>
+
+<div class="app-container">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+            <i class="fa-solid fa-book-open"></i>
+
+            <span>Library</span>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+
+            <a href="dashboard.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="books.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-book"></i>
+
+                <span>Browse Books</span>
+
+            </a>
+
+
+            <a href="borrowed-books.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-book-open-reader"></i>
+
+                <span>Borrowed Books</span>
+
+            </a>
+
+
+            <a href="reservations.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-bookmark"></i>
+
+                <span>Reservations</span>
+
+            </a>
+
+
+            <a href="history.html"
+               class="menu-item active">
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                <span>History</span>
+
+            </a>
+
+
+            <a href="fines.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-money-bill"></i>
+
+                <span>My Fines</span>
+
+            </a>
+
+
+            <a href="digital-library.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-laptop"></i>
+
+                <span>Digital Library</span>
+
+            </a>
+
+
+            <a href="notifications.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-bell"></i>
+
+                <span>Notifications</span>
+
+            </a>
+
+
+            <a href="profile.html"
+               class="menu-item">
+
+                <i class="fa-solid fa-user"></i>
+
+                <span>My Profile</span>
+
+            </a>
+
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+
+        <header class="topbar">
+
+
+            <div class="search-box">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                <input type="text"
+                       placeholder="Search history...">
+
+            </div>
+
+
+            <div class="profile-mini">
+
+
+                <div class="avatar">
+
+                    A
+
+                </div>
+
+
+                <div>
+
+                    <h4>Akshay</h4>
+
+                    <p>Member</p>
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+        <!-- HISTORY PAGE -->
+
+        <section class="history-page">
+
+
+            <div class="page-header">
+
+
+                <div>
+
+                    <h1>Borrowing History</h1>
+
+
+                    <p>
+
+                        View your complete borrowing and return history.
+
+                    </p>
+
+                </div>
+
+
+                <div class="history-count">
+
+
+                    <i class="fa-solid fa-book"></i>
+
+
+                    <span id="totalHistory">
+
+                        0 Books
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- HISTORY LIST -->
+
+            <div id="historyList"
+                 class="history-list">
+
+            </div>
+
+
+            <!-- EMPTY STATE -->
+
+            <div id="emptyHistory"
+                 class="empty-state">
+
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+
+                <h2>
+
+                    No Borrowing History
+
+                </h2>
+
+
+                <p>
+
+                    Your returned books will appear here.
+
+                </p>
+
+
+                <a href="books.html"
+                   class="browse-btn">
+
+                    Browse Books
+
+                </a>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+<script src="../js/books-data.js"></script>
+<script src="../js/library-store.js"></script>
+<script src="../js/app.js"></script>
+
+<script src="../js/history.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title> SmartLibrary |A System for a Library</title>
+
+    <!-- Google Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header>
+
+        <nav class="navbar">
+
+            <div class="logo">
+                <i class="fa-solid fa-book-open"></i>
+                <h2>Smart<span>Library</span></h2>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#library">Library</a></li>
+            </ul>
+
+           <a href="#login" class="login-btn">
+            Login
+        </a>
+
+        </nav>
+
+    </header>
+
+    <!-- ================= HERO ================= -->
+
+    <section id="home" class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Smart Library
+                <span>Management System</span>
+            </h1>
+
+            <p>
+                A secure and efficient platform designed to simplify library
+                operations including book management, member management,
+                issue & return process, and library administration.
+            </p>
+
+            <a href="#login" class="hero-btn">
+                Get Started
+            </a>
+
+        </div>
+
+        <div class="hero-image">
+
+            <img src="https://png.pngtree.com/png-clipart/20240228/original/pngtree-school-library-with-students-png-image_14441072.png" alt="Library Illustration">
+
+        </div>
+
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+
+    <section id="about" class="about">
+
+        <div class="section-title">
+            <h2>About Our Library</h2>
+        </div>
+
+        <div class="about-container">
+
+            <div class="about-image">
+                <img src="https://png.pngtree.com/png-vector/20231020/ourmid/pngtree-watercolor-library-book-clip-art-png-image_10285452.png" alt="About Library">
+            </div>
+
+            <div class="about-content">
+
+                <p>
+                    Our college library provides a peaceful and resourceful learning environment
+                    for students and faculty. It offers a wide collection of textbooks,
+                    reference books, journals, magazines, and digital resources that support
+                    academic learning, research, and personal development.
+                </p>
+
+                <p>
+                    The library is designed to encourage reading, knowledge sharing, and
+                    innovation by providing easy access to quality educational resources.
+                    With a modern Library Management System, users can quickly search,
+                    issue, and return books while librarians efficiently manage library operations.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= LIBRARY ================= -->
+
+    <section id="library" class="library-info">
+
+        <div class="section-title">
+            <h2>Library Information</h2>
+        </div>
+
+        <div class="library-container">
+
+            <div class="info-card">
+
+                <i class="fa-solid fa-book"></i>
+
+                <h3>Book Collection</h3>
+
+                <p>
+                    Access academic books, reference books,
+                    journals, magazines and digital learning
+                    resources available in the college library.
+                </p>
+
+            </div>
+
+            <div class="info-card">
+
+                <i class="fa-solid fa-user-graduate"></i>
+
+                <h3>Student Services</h3>
+
+                <p>
+                    Search books, check availability,
+                    borrow books and monitor issued
+                    books with due dates.
+                </p>
+
+            </div>
+
+            <div class="info-card">
+
+                <i class="fa-solid fa-building-columns"></i>
+
+                <h3>Library Administration</h3>
+
+                <p>
+                    Manage books, members, transactions,
+                    reports and daily library activities
+                    efficiently.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= WORKFLOW ================= -->
+
+    <section id="workflow" class="workflow">
+
+        <div class="section-title">
+            <h2>System Workflow</h2>
+        </div>
+
+        <div class="workflow-container">
+
+            <div class="step">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <h4>Login</h4>
+            </div>
+
+            <div class="arrow">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+
+            <div class="step">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <h4>Search Book</h4>
+            </div>
+
+            <div class="arrow">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+
+            <div class="step">
+                <i class="fa-solid fa-book-open-reader"></i>
+                <h4>Issue Book</h4>
+            </div>
+
+            <div class="arrow">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+
+            <div class="step">
+                <i class="fa-solid fa-rotate-left"></i>
+                <h4>Return Book</h4>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= LOGIN ================= -->
+
+    <section id="login" class="login-section">
+
+    <div class="section-title">
+        <h2>Select Login Portal</h2>
+    </div>
+
+    <div class="login-container">
+
+        <!-- Admin -->
+        
+        <div class="login-card">
+            
+            <i class="fa-solid fa-user-shield"></i>
+
+            <h3>Administrator</h3>
+
+            <p>
+                Manage books, librarians, members,
+                reports and complete library operations.
+            </p>
+
+
+                 <button onclick="window.open('../Admin Dashboard(Siddhesh,Soham)/Final Project (Siddhesh & Soham)/login.html', '_blank')">
+    Login
+</button>
+        </div>
+
+        <!-- Librarian -->
+
+        <div class="login-card">
+
+            <i class="fa-solid fa-book"></i>
+
+            <h3>Librarian</h3>
+
+            <p>
+                Issue books, return books,
+                manage members and daily records.
+            </p>
+
+            <button onclick="window.open('../librarian Dashboard(sid)/librarian/login.html', '_blank')">
+                Login
+            </button>
+
+        </div>
+
+        <!-- Member -->
+
+        <div class="login-card">
+
+
+            <i class="fa-solid fa-user-graduate"></i>
+
+            <h3>Member</h3>
+
+            <p>
+                Search books, view issued books,
+                due dates and fine details.
+            </p>
+
+            <button onclick="window.open('../Member Dashboard(Abhishek)/login.html', '_blank')">
+                Login
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <h3>LibraryHub</h3>
+
+        <p>
+            College Library Management System
+        </p>
+
+        <p>
+            © 2026 All Rights Reserved.
+        </p>
+
+    </footer>
+
+    <!-- JavaScript -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

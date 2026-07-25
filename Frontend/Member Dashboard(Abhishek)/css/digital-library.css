@@ -1,0 +1,214 @@
+.digital-page {
+
+    padding: 36px;
+
+    max-width: 1500px;
+
+    margin: auto;
+
+}
+
+.digital-hero {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 42px;
+
+    border-radius: 20px;
+
+    background: linear-gradient(
+
+        135deg,
+
+        #eff6ff,
+
+        #f8faff
+
+    );
+
+    margin-bottom: 35px;
+
+}
+
+.digital-hero span {
+
+    color: var(--primary-color);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+}
+
+.digital-hero h1 {
+
+    font-size: 38px;
+
+    line-height: 1.2;
+
+    margin: 12px 0;
+
+}
+
+.digital-hero h1 strong {
+
+    color: var(--primary-color);
+
+}
+
+.digital-hero p {
+
+    color: var(--text-light);
+
+    max-width: 500px;
+
+}
+
+.digital-hero > i {
+
+    font-size: 130px;
+
+    color: var(--primary-color);
+
+    opacity: .15;
+
+}
+
+.resource-toolbar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 22px;
+
+}
+
+.resource-filters {
+
+    display: flex;
+
+    gap: 8px;
+
+}
+
+.resource-filters button {
+
+    padding: 9px 16px;
+
+    border: 1px solid var(--border-color);
+
+    background: white;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+}
+
+.resource-filters button.active {
+
+    background: var(--primary-color);
+
+    color: white;
+
+}
+
+.resource-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 20px;
+
+}
+
+.resource-card {
+
+    background: white;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 15px;
+
+    padding: 18px;
+
+    transition: .25s;
+
+}
+
+.resource-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.resource-cover {
+
+    height: 150px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eff6ff;
+
+    border-radius: 10px;
+
+    font-size: 42px;
+
+    color: var(--primary-color);
+
+    margin-bottom: 16px;
+
+}
+
+.resource-card h3 {
+
+    font-size: 16px;
+
+    margin-bottom: 6px;
+
+}
+
+.resource-card p {
+
+    font-size: 13px;
+
+    color: var(--text-light);
+
+}
+
+.read-btn {
+
+    width: 100%;
+
+    margin-top: 16px;
+
+    padding: 10px;
+
+    border: none;
+
+    background: var(--primary-color);
+
+    color: white;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+}
+

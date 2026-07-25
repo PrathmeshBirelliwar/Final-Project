@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Library Management System</title>
+
+
+    <!-- Google Font -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <!-- Auth CSS -->
+
+    <link rel="stylesheet"
+          href="css/auth.css">
+
+</head>
+
+
+<body>
+
+
+    <div class="auth-container">
+
+
+        <!-- LEFT SECTION -->
+
+        <div class="auth-left">
+
+            <div class="brand">
+
+                <i class="fa-solid fa-book-open"></i>
+
+                <h1>Library</h1>
+
+            </div>
+
+
+            <div class="welcome-text">
+
+                <h2>
+                    Welcome Back!
+                </h2>
+
+                <p>
+                    Access your library account and manage your books easily.
+                </p>
+
+            </div>
+
+
+            <div class="library-icon">
+
+                <i class="fa-solid fa-book-open-reader"></i>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SECTION -->
+
+        <div class="auth-right">
+
+
+            <div class="login-box">
+
+
+                <div class="login-header">
+
+                    <h2>
+                        Member Login
+                    </h2>
+
+                    <p>
+                        Enter your credentials to access your account.
+                    </p>
+
+                </div>
+
+
+                <!-- LOGIN FORM -->
+
+                <form id="loginForm">
+
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-envelope"></i>
+
+
+                            <input
+                                type="text"
+                                id="email"
+                                placeholder="Enter your email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-lock"></i>
+
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                onclick="togglePassword()">
+
+                                <i
+                                    class="fa-solid fa-eye"
+                                    id="eyeIcon">
+                                </i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OPTIONS -->
+
+                    <div class="login-options">
+
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                            >
+
+                            Remember me
+
+                        </label>
+
+
+                        <a href="#">
+                            Forgot Password?
+                        </a>
+
+                    </div>
+
+
+                    <!-- ERROR MESSAGE -->
+
+                    <p
+                        id="errorMessage"
+                        class="error-message">
+                    </p>
+
+
+                    <!-- LOGIN BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="login-btn">
+
+                        <i class="fa-solid fa-right-to-bracket"></i>
+
+                        Login
+
+                    </button>
+
+
+                </form>
+
+
+                <div class="login-footer">
+
+                    <p>
+                        Don't have an account?
+                        <a href="#">
+                            Contact Library Admin
+                        </a>
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- JavaScript -->
+
+    <script src="js/auth.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Digital Library | Library</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <link rel="stylesheet" href="../css/digital-library.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <i class="fa-solid fa-book-open"></i>
+
+            <span>Library</span>
+
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="dashboard.html" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="books.html" class="menu-item">
+                <i class="fa-solid fa-book"></i>
+                <span>Browse Books</span>
+            </a>
+
+            <a href="borrowed-books.html" class="menu-item">
+                <i class="fa-solid fa-book-open-reader"></i>
+                <span>Borrowed Books</span>
+            </a>
+
+            <a href="reservations.html" class="menu-item">
+                <i class="fa-solid fa-bookmark"></i>
+                <span>Reservations</span>
+            </a>
+
+            <a href="history.html" class="menu-item">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>History</span>
+            </a>
+
+            <a href="fines.html" class="menu-item">
+                <i class="fa-solid fa-money-bill"></i>
+                <span>My Fines</span>
+            </a>
+
+            <a href="digital-library.html" class="menu-item active">
+                <i class="fa-solid fa-laptop"></i>
+                <span>Digital Library</span>
+            </a>
+
+            <a href="notifications.html" class="menu-item">
+                <i class="fa-solid fa-bell"></i>
+                <span>Notifications</span>
+            </a>
+
+            <a href="profile.html" class="menu-item">
+                <i class="fa-solid fa-user"></i>
+                <span>My Profile</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div class="search-box">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input type="text"
+                    placeholder="Search digital resources...">
+
+            </div>
+
+            <div class="profile-mini">
+
+                <div class="avatar">A</div>
+
+                <div>
+                    <h4>Akshay</h4>
+                    <p>Member</p>
+                </div>
+
+            </div>
+
+        </header>
+
+        <section class="digital-page">
+
+            <div class="digital-hero">
+
+                <div>
+
+                    <span>LIBRARY DIGITAL COLLECTION</span>
+
+                    <h1>
+                        Your Knowledge,
+                        <br>
+                        <strong>Available Anywhere.</strong>
+                    </h1>
+
+                    <p>
+                        Access e-books, research papers, journals,
+                        and digital resources from one place.
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-book-open-reader"></i>
+
+            </div>
+
+            <div class="resource-toolbar">
+
+                <h2>Explore Resources</h2>
+
+                <div class="resource-filters">
+
+                    <button class="active">
+                        All
+                    </button>
+
+                    <button>
+                        E-Books
+                    </button>
+
+                    <button>
+                        Journals
+                    </button>
+
+                    <button>
+                        Research
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div id="digitalResources"
+                class="resource-grid">
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/digital-library.js"></script>
+
+</body>
+
+</html>
+
+ 

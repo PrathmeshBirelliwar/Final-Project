@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Fine Management</title>
+
+    <!-- Google Font -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <link rel="stylesheet"
+          href="css/fine.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-wrapper">
+
+<!-- ========================================= -->
+<!-- SIDEBAR -->
+<!-- ========================================= -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-logo">
+
+        <i class="fa-solid fa-book-open-reader"></i>
+
+        <h2>LibraryMS</h2>
+
+    </div>
+
+    <nav class="sidebar-nav">
+
+        <ul>
+
+            <li>
+
+                <a href="index.html">
+
+                    <i class="fa-solid fa-house"></i>
+
+                    <span>Dashboard</span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="books.html">
+
+                    <i class="fa-solid fa-book"></i>
+
+                    <span>Books</span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="students.html">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <span>Students</span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="issue-book.html">
+
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
+                    <span>Issue Book</span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="return-book.html">
+
+                    <i class="fa-solid fa-rotate-left"></i>
+
+                    <span>Return Book</span>
+
+                </a>
+
+            </li>
+
+            <li class="active">
+
+                <a href="fine.html">
+
+                    <i class="fa-solid fa-money-bill-wave"></i>
+
+                    <span>Fine</span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="reports.html">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    <span>Reports</span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="settings.html">
+
+                    <i class="fa-solid fa-gear"></i>
+
+                    <span>Settings</span>
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </nav>
+
+</aside>
+
+<!-- ========================================= -->
+<!-- MAIN CONTENT -->
+<!-- ========================================= -->
+
+<main class="main-content">
+
+<header class="top-header">
+
+    <div class="header-left">
+
+        <h1>Fine Management</h1>
+
+        <p>
+
+            Manage all student fines and payments.
+
+        </p>
+
+    </div>
+
+</header>
+
+<!-- ========================================= -->
+<!-- DASHBOARD CARDS -->
+<!-- ========================================= -->
+
+<section class="fine-cards">
+
+    <div class="fine-card">
+
+        <i class="fa-solid fa-money-bill-wave"></i>
+
+        <h2 id="totalFineAmount">₹0</h2>
+
+        <p>Total Fine</p>
+
+    </div>
+
+    <div class="fine-card">
+
+        <i class="fa-solid fa-clock"></i>
+
+        <h2 id="pendingFine">₹0</h2>
+
+        <p>Pending Fine</p>
+
+    </div>
+
+    <div class="fine-card">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <h2 id="paidFine">₹0</h2>
+
+        <p>Paid Fine</p>
+
+    </div>
+
+    <div class="fine-card">
+
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+
+        <h2 id="totalFineRecords">0</h2>
+
+        <p>Total Records</p>
+
+    </div>
+
+</section><!-- ========================================= -->
+<!-- SEARCH -->
+<!-- ========================================= -->
+
+<section class="search-section">
+
+    <div class="search-box">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+            type="text"
+            id="searchFine"
+            placeholder="Search by Student, Book or Fine ID">
+
+    </div>
+
+</section>
+
+<!-- ========================================= -->
+<!-- FINE TABLE -->
+<!-- ========================================= -->
+
+<section class="fine-table-section">
+
+    <div class="table-header">
+
+        <h2>Fine Records</h2>
+
+    </div>
+
+    <table class="fine-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Fine ID</th>
+
+                <th>Student</th>
+
+                <th>Book</th>
+
+                <th>Late Days</th>
+
+                <th>Fine Amount</th>
+
+                <th>Status</th>
+
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<!-- ========================================= -->
+<!-- PAY FINE MODAL -->
+<!-- ========================================= -->
+
+<div class="modal-overlay"
+
+     id="payFineModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>Pay Fine</h2>
+
+            <button id="closeFineModal">
+
+                &times;
+
+            </button>
+
+        </div>
+
+        <form id="fineForm">
+
+            <div class="form-group">
+
+                <label>
+
+                    Student Name
+
+                </label>
+
+                <input
+
+                    type="text"
+
+                    id="fineStudent"
+
+                    readonly>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+
+                    Book Name
+
+                </label>
+
+                <input
+
+                    type="text"
+
+                    id="fineBook"
+
+                    readonly>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+
+                    Late Days
+
+                </label>
+
+                <input
+
+                    type="text"
+
+                    id="fineLateDays"
+
+                    readonly>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+
+                    Fine Amount
+
+                </label>
+
+                <input
+
+                    type="text"
+
+                    id="fineAmount"
+
+                    readonly>
+
+            </div>
+
+            <div class="modal-buttons">
+
+                <button
+
+                    type="button"
+
+                    class="cancel-btn">
+
+                    Cancel
+
+                </button>
+
+                <button
+
+                    type="submit"
+
+                    class="primary-btn">
+
+                    Pay Fine
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div><!-- ========================================= -->
+<!-- BOOTSTRAP JS -->
+<!-- ========================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ========================================= -->
+<!-- SHARED DATABASE -->
+<!-- ========================================= -->
+
+<script src="data/library-data.js"></script>
+
+<!-- ========================================= -->
+<!-- FINE JAVASCRIPT -->
+<!-- ========================================= -->
+
+<script src="js/fine.js"></script>
+
+</main>
+
+</div>
+
+</body>
+
+</html>

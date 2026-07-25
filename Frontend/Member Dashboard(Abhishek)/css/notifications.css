@@ -1,0 +1,199 @@
+.notifications-page {
+
+    padding: 36px;
+
+    max-width: 1200px;
+
+    margin: auto;
+
+}
+
+
+.eyebrow {
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    color: var(--primary-color);
+
+}
+
+
+.notification-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 28px;
+
+}
+
+
+.notification-header h1 {
+
+    font-size: 32px;
+
+    margin: 8px 0;
+
+}
+
+
+.notification-header p {
+
+    color: var(--text-light);
+
+}
+
+
+.notification-header button {
+
+    padding: 11px 16px;
+
+    border: 1px solid var(--border-color);
+
+    background: white;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    color: var(--primary-color);
+
+}
+
+
+.notification-tabs {
+
+    display: flex;
+
+    gap: 8px;
+
+    border-bottom: 1px solid var(--border-color);
+
+    margin-bottom: 20px;
+
+}
+
+
+.notification-tabs button {
+
+    border: none;
+
+    background: transparent;
+
+    padding: 13px 18px;
+
+    cursor: pointer;
+
+    color: var(--text-light);
+
+}
+
+
+.notification-tabs button.active {
+
+    color: var(--primary-color);
+
+    border-bottom: 2px solid var(--primary-color);
+
+}
+
+
+.notification-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+
+.notification-card {
+
+    display: flex;
+
+    gap: 16px;
+
+    padding: 20px;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 14px;
+
+    background: white;
+
+}
+
+
+.notification-card.unread {
+
+    background: #f8fbff;
+
+    border-left: 4px solid var(--primary-color);
+
+}
+
+
+.notification-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+
+    color: var(--primary-color);
+
+}
+
+
+.notification-content {
+
+    flex: 1;
+
+}
+
+
+.notification-content h3 {
+
+    font-size: 15px;
+
+    margin-bottom: 5px;
+
+}
+
+
+.notification-content p {
+
+    color: var(--text-light);
+
+    font-size: 13px;
+
+}
+
+
+.notification-time {
+
+    color: var(--text-light);
+
+    font-size: 11px;
+
+    white-space: nowrap;
+
+}

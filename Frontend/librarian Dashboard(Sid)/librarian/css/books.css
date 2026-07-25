@@ -1,0 +1,884 @@
+/* ==========================================
+   RESET
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+
+    background:#F4F7FC;
+
+    color:#1E293B;
+
+}
+
+/* ==========================================
+   MAIN LAYOUT
+========================================== */
+
+.books-page{
+
+    display:flex;
+
+    min-height:100vh;
+
+}
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.sidebar{
+
+    width:260px;
+
+    height:100vh;
+
+    position:fixed;
+
+    left:0;
+
+    top:0;
+
+    background:#2563EB;
+
+    color:#ffffff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+}
+
+/* ==========================================
+   SIDEBAR LOGO
+========================================== */
+
+.sidebar-logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:28px 25px;
+
+}
+
+.sidebar-logo i{
+
+    font-size:30px;
+
+}
+
+.sidebar-logo h2{
+
+    font-size:24px;
+
+    font-weight:600;
+
+}
+
+/* ==========================================
+   SIDEBAR MENU
+========================================== */
+
+.sidebar-nav{
+
+    flex:1;
+
+    margin-top:20px;
+
+}
+
+.sidebar-nav ul{
+
+    list-style:none;
+
+}
+
+.sidebar-nav li{
+
+    margin:8px 18px;
+
+}
+
+.sidebar-nav li a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:14px 18px;
+
+    text-decoration:none;
+
+    color:#ffffff;
+
+    border-radius:12px;
+
+    transition:0.3s;
+
+}
+
+.sidebar-nav li a:hover{
+
+    background:rgba(255,255,255,0.15);
+
+}
+
+.sidebar-nav li.active a{
+
+    background:#ffffff;
+
+    color:#2563EB;
+
+    font-weight:600;
+
+}
+
+.sidebar-nav li a i{
+
+    width:22px;
+
+    text-align:center;
+
+}
+
+/* ==========================================
+   SIDEBAR FOOTER
+========================================== */
+
+.sidebar-footer{
+
+    padding:20px;
+
+}
+
+.sidebar-footer a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:14px 18px;
+
+    color:white;
+
+    text-decoration:none;
+
+    border-radius:12px;
+
+    transition:0.3s;
+
+}
+
+.sidebar-footer a:hover{
+
+    background:rgba(255,255,255,0.15);
+
+}/* ==========================================
+   MAIN CONTENT
+========================================== */
+
+.books-content{
+
+    margin-left:260px;
+
+    width:calc(100% - 260px);
+
+    padding:30px;
+
+}
+
+/* ==========================================
+   PAGE HEADER
+========================================== */
+
+.books-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+.header-text h1{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:#1E293B;
+
+}
+
+.header-text p{
+
+    margin-top:6px;
+
+    color:#64748B;
+
+    font-size:15px;
+
+}
+
+/* ==========================================
+   ADD BOOK BUTTON
+========================================== */
+
+.add-book-btn{
+
+    background:#2563EB;
+
+    color:white;
+
+    border:none;
+
+    padding:14px 22px;
+
+    border-radius:12px;
+
+    font-size:15px;
+
+    font-weight:500;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    transition:.3s;
+
+}
+
+.add-book-btn:hover{
+
+    background:#1D4ED8;
+
+    transform:translateY(-2px);
+
+}
+
+/* ==========================================
+   SEARCH SECTION
+========================================== */
+
+.search-section{
+
+    margin-bottom:30px;
+
+}
+
+.book-search-box{
+
+    width:100%;
+
+    max-width:450px;
+
+    background:#ffffff;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 18px;
+
+    border-radius:12px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+
+}
+
+.book-search-box i{
+
+    color:#64748B;
+
+    font-size:16px;
+
+}
+
+.book-search-box input{
+
+    width:100%;
+
+    border:none;
+
+    outline:none;
+
+    font-size:15px;
+
+    background:transparent;
+
+}/* ==========================================
+   BOOKS TABLE SECTION
+========================================== */
+
+.books-table-section{
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+
+}
+
+/* ==========================================
+   TABLE HEADER
+========================================== */
+
+.table-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.table-header h2{
+
+    font-size:24px;
+
+    font-weight:600;
+
+    color:#1E293B;
+
+}
+
+.table-header span{
+
+    background:#EFF6FF;
+
+    color:#2563EB;
+
+    padding:8px 16px;
+
+    border-radius:20px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+/* ==========================================
+   TABLE
+========================================== */
+
+.books-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.books-table thead{
+
+    background:#2563EB;
+
+}
+
+.books-table thead th{
+
+    color:#ffffff;
+
+    padding:16px;
+
+    text-align:left;
+
+    font-size:15px;
+
+    font-weight:600;
+
+}
+
+.books-table tbody td{
+
+    padding:16px;
+
+    border-bottom:1px solid #E5E7EB;
+
+    font-size:15px;
+
+}
+
+.books-table tbody tr{
+
+    transition:0.3s;
+
+}
+
+.books-table tbody tr:hover{
+
+    background:#F8FAFC;
+
+}
+
+/* ==========================================
+   STATUS BADGES
+========================================== */
+
+.status{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.status.available{
+
+    background:#DCFCE7;
+
+    color:#15803D;
+
+}
+
+.status.issued{
+
+    background:#FEE2E2;
+
+    color:#DC2626;
+
+}
+
+/* ==========================================
+   ACTION BUTTONS
+========================================== */
+
+.edit-btn,
+.delete-btn{
+
+    width:38px;
+
+    height:38px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    margin-right:8px;
+
+    transition:0.3s;
+
+}
+
+.edit-btn{
+
+    background:#DBEAFE;
+
+    color:#2563EB;
+
+}
+
+.edit-btn:hover{
+
+    background:#2563EB;
+
+    color:#ffffff;
+
+}
+
+.delete-btn{
+
+    background:#FEE2E2;
+
+    color:#DC2626;
+
+}
+
+.delete-btn:hover{
+
+    background:#DC2626;
+
+    color:#ffffff;
+
+}/* ==========================================
+   MODAL OVERLAY
+========================================== */
+
+.modal-overlay{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:rgba(0,0,0,0.5);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:1000;
+
+}
+
+/* ==========================================
+   MODAL BOX
+========================================== */
+
+.modal-box{
+
+    width:650px;
+
+    max-width:95%;
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+
+    animation:popup .3s ease;
+
+}
+
+@keyframes popup{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(.9);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+}
+
+/* ==========================================
+   MODAL HEADER
+========================================== */
+
+.modal-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+.modal-header h2{
+
+    font-size:26px;
+
+    color:#1E293B;
+
+}
+
+.close-modal-btn{
+
+    width:40px;
+
+    height:40px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#F3F4F6;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.close-modal-btn:hover{
+
+    background:#EF4444;
+
+    color:#ffffff;
+
+}
+
+/* ==========================================
+   FORM
+========================================== */
+
+.book-form{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
+.form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.form-group label{
+
+    margin-bottom:8px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#374151;
+
+}
+
+.form-group input,
+.form-group select{
+
+    padding:12px 15px;
+
+    border:1px solid #D1D5DB;
+
+    border-radius:10px;
+
+    outline:none;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.form-group input:focus,
+.form-group select:focus{
+
+    border-color:#2563EB;
+
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+.form-buttons{
+
+    grid-column:1 / 3;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:15px;
+
+    margin-top:10px;
+
+}
+
+.cancel-btn{
+
+    border:none;
+
+    background:#E5E7EB;
+
+    padding:12px 22px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:500;
+
+}
+
+.cancel-btn:hover{
+
+    background:#D1D5DB;
+
+}
+
+.save-btn{
+
+    border:none;
+
+    background:#2563EB;
+
+    color:#ffffff;
+
+    padding:12px 24px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:500;
+
+}
+
+.save-btn:hover{
+
+    background:#1D4ED8;
+
+}/* ==========================================
+   FOOTER
+========================================== */
+
+.books-footer{
+
+    margin-top:30px;
+
+    background:#ffffff;
+
+    border-radius:16px;
+
+    padding:18px;
+
+    text-align:center;
+
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+
+}
+
+.books-footer p{
+
+    color:#64748B;
+
+    font-size:14px;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:1200px){
+
+    .book-form{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .form-buttons{
+
+        grid-column:1;
+
+    }
+
+}
+
+@media(max-width:992px){
+
+    .books-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:20px;
+
+    }
+
+    .book-search-box{
+
+        max-width:100%;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .sidebar{
+
+        width:80px;
+
+    }
+
+    .sidebar-logo h2{
+
+        display:none;
+
+    }
+
+    .sidebar-nav li a span{
+
+        display:none;
+
+    }
+
+    .sidebar-footer span{
+
+        display:none;
+
+    }
+
+    .books-content{
+
+        margin-left:80px;
+
+        width:calc(100% - 80px);
+
+    }
+
+    .books-table{
+
+        display:block;
+
+        overflow-x:auto;
+
+    }
+
+}
