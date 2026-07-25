@@ -10,7 +10,6 @@
 
 <link rel="stylesheet" href="css/style.css">
 
-<script src="js/db.js"></script>
 <script src="js/auth.js"></script>
 </head>
 <header>
@@ -77,7 +76,7 @@
     <button type="button"
             class="add"
             id="btnSaveBook"
-            onclick="saveBook()">
+            onclick="addBook()">
         Add Book
     </button>
 
@@ -149,28 +148,54 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+const API = "http://localhost:5000/api/books";
+
+function getToken() {
+    return sessionStorage.getItem("token");
+}
 
 let selectedRow = null;
 let selectedBookId = null;
 
-function renderBooks() {
-    const books = window.DB.getBooks();
-    const tableBody = document.getElementById("bookTable");
-    tableBody.innerHTML = "";
+async function renderBooks() {
+    try {
+        const response = await fetch(API, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
 
-    books.forEach(b => {
-        const tr = document.createElement("tr");
-        tr.onclick = function() { selectRow(this, b.id); };
-        tr.innerHTML = `
-            <td>${b.id}</td>
-            <td>${b.name}</td>
-            <td>${b.author}</td>
-            <td>${b.category}</td>
-            <td>${b.publisher}</td>
-            <td>${b.quantity}</td>
-        `;
-        tableBody.appendChild(tr);
-    });
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
+
+        const tableBody = document.getElementById("bookTable");
+        tableBody.innerHTML = "";
+
+        data.books.forEach(b => {
+            const tr = document.createElement("tr");
+
+            tr.onclick = () => selectRow(tr, b.id);
+
+            tr.innerHTML = `
+                <td>${b.id}</td>
+                <td>${b.title}</td>
+                <td>${b.author}</td>
+                <td>${b.category}</td>
+                <td>${b.publisher ?? ""}</td>
+                <td>${b.totalCopies}</td>
+            `;
+
+            tableBody.appendChild(tr);
+        });
+
+    } catch (err) {
+        console.error(err);
+        alert("Unable to load books.");
+    }
 }
 
 function selectRow(row, id){
@@ -191,96 +216,130 @@ document.getElementById("quantity").value=row.cells[5].innerText;
 
 }
 
-function addBook(){
+async function addBook() {
 
-const id = document.getElementById("bookId").value;
-const name = document.getElementById("bookName").value;
-const author = document.getElementById("author").value;
-const category = document.getElementById("category").value;
-const publisher = document.getElementById("publisher").value;
-const rawQty = document.getElementById("quantity").value;
+    const book = {
+        id: document.getElementById("bookId").value,
+        name: document.getElementById("bookName").value,
+        author: document.getElementById("author").value,
+        category: document.getElementById("category").value,
+        publisher: document.getElementById("publisher").value,
+        quantity: Number(document.getElementById("quantity").value)
+    };
 
-// Backend & Frontend Validation via DB module
-const res = window.DB.addBook({
-    id,
-    name,
-    author,
-    category,
-    publisher,
-    quantity: Number(rawQty)
-});
+    try {
 
-if (!res.success) {
-    alert(res.message);
-    return;
-}
+        const response = await fetch(API, {
 
-renderBooks();
-clearForm();
-alert(res.message);
+            method: "POST",
 
-}
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${getToken()}`
+            },
 
-function updateBook(){
+            body: JSON.stringify(book)
 
-if(selectedRow == null || !selectedBookId){
-alert("Please select a book row to update");
-return;
-}
+        });
 
-const id = document.getElementById("bookId").value;
-const name = document.getElementById("bookName").value;
-const author = document.getElementById("author").value;
-const category = document.getElementById("category").value;
-const publisher = document.getElementById("publisher").value;
-const rawQty = document.getElementById("quantity").value;
+        const data = await response.json();
 
-const res = window.DB.updateBook(selectedBookId, {
-    id,
-    name,
-    author,
-    category,
-    publisher,
-    quantity: Number(rawQty)
-});
+        alert(data.message);
 
-if (!res.success) {
-    alert(res.message);
-    return;
-}
+        if (data.success) {
 
-renderBooks();
-clearForm();
-alert(res.message);
+            clearForm();
+
+            renderBooks();
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert("Unable to add book.");
+
+    }
 
 }
 
-function deleteBook(){
+async function updateBook() {
 
-if(selectedRow == null || !selectedBookId){
-alert("Please select a book row to delete");
-return;
-}
-
-const bookName = selectedRow.cells[1].innerText;
-const msg = `Are you sure you want to delete book "${bookName}" (Book ID: ${selectedBookId})?`;
-document.getElementById("deleteBookMsg").innerText = msg;
-
-const modalEl = document.getElementById("deleteBookModal");
-const modal = new bootstrap.Modal(modalEl);
-modal.show();
-
-document.getElementById("btnConfirmDeleteBook").onclick = function() {
-    modal.hide();
-    const res = window.DB.deleteBook(selectedBookId);
-    if (!res.success) {
-        alert(res.message);
+    if (selectedRow == null || !selectedBookId) {
+        alert("Please select a book row to update");
         return;
     }
-    renderBooks();
-    clearForm();
-    alert(res.message);
-};
+
+    const book = {
+        id: document.getElementById("bookId").value,
+        name: document.getElementById("bookName").value,
+        author: document.getElementById("author").value,
+        category: document.getElementById("category").value,
+        publisher: document.getElementById("publisher").value,
+        quantity: Number(document.getElementById("quantity").value)
+    };
+
+    try {
+
+        const response = await fetch(API + "/" + selectedBookId, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${getToken()}`
+            },
+            body: JSON.stringify(book)
+        });
+
+        const data = await response.json();
+
+        alert(data.message);
+
+        if (data.success) {
+            clearForm();
+            renderBooks();
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert("Unable to update book.");
+    }
+
+}
+
+async function deleteBook() {
+
+    if (selectedRow == null || !selectedBookId) {
+        alert("Please select a book row to delete");
+        return;
+    }
+
+    if (!confirm("Are you sure you want to delete this book?")) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(API + "/" + selectedBookId, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
+
+        const data = await response.json();
+
+        alert(data.message);
+
+        if (data.success) {
+            clearForm();
+            renderBooks();
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert("Unable to delete book.");
+    }
 
 }
 

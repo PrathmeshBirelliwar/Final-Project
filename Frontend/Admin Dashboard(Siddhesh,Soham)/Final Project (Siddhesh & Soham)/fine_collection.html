@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="css/style.css">
 
-<script src="js/db.js"></script>
 <script src="js/auth.js"></script>
 </head>
 
@@ -40,19 +39,19 @@
 
 <div class="card p-4">
     <i class="bi bi-cash-stack"></i>
-    <h4>₹300</h4>
+    <h4 id="totalCollected">₹0</h4>
     <p>Total Fine Collected</p>
 </div>
 
 <div class="card p-4">
     <i class="bi bi-hourglass-split"></i>
-    <h4>₹200</h4>
+    <h4 id="pendingFine">₹0</h4>
     <p>Pending Fine</p>
 </div>
 
 <div class="card p-4">
     <i class="bi bi-people-fill"></i>
-    <h4>4</h4>
+    <h4 id="membersFined">0</h4>
     <p>Members Fined</p>
 </div>
 </div>
@@ -115,108 +114,179 @@ onkeyup="searchFine()">
 
 <script>
 
-let currentFineIndexToPay = null;
+const API = "http://localhost:5000/api/fines";
+const STATS_API = "http://localhost:5000/api/stats/admin";
 
-function renderFineTable(filteredQuery = ""){
+function getToken() {
+    return sessionStorage.getItem("token");
+}
 
-    const fines = window.DB.getFines();
-    const tbody = document.getElementById("fineTableBody");
-    tbody.innerHTML = "";
+let currentIssueIdToPay = null;
 
-    let totalCollected = 0;
-    let pendingFine = 0;
-    let filteredCount = 0;
+async function renderFineTable(search = "") {
 
-    const cleanQuery = filteredQuery.trim().toLowerCase();
+    try {
 
-    fines.forEach((item, index) => {
+        const [fineRes, statsRes] = await Promise.all([
 
-        const searchableText = `${item.memberId} ${item.memberName} ${item.book} ${item.amount} ${item.status}`.toLowerCase();
-        
-        // Filter logic (BUG_16)
-        if (cleanQuery !== "" && !searchableText.includes(cleanQuery)) {
+            fetch(API, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`
+                }
+            }),
+
+            fetch(STATS_API, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`
+                }
+            })
+
+        ]);
+
+        const fineData = await fineRes.json();
+        const statsData = await statsRes.json();
+
+        if (!fineData.success || !statsData.success) {
+            alert("Unable to load fine records.");
             return;
         }
 
-        filteredCount++;
+        const tbody = document.getElementById("fineTableBody");
+        tbody.innerHTML = "";
 
-        if(item.status === "Paid"){
-            totalCollected += Number(item.amount);
-        } else {
-            pendingFine += Number(item.amount);
-        }
+        document.getElementById("totalCollected").innerText =
+            "₹" + statsData.stats.totalCollectedFines;
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${item.memberId || item.id}</td>
-            <td>${item.memberName || item.name}</td>
-            <td>${item.book}</td>
-            <td>₹${item.amount}</td>
-            <td class="${item.status === "Paid" ? "status-paid" : "status-pending"}">
-                ${item.status}
-            </td>
-            <td>
+        document.getElementById("pendingFine").innerText =
+            "₹" + statsData.stats.pendingFines;
+
+        document.getElementById("membersFined").innerText =
+            statsData.stats.membersFinedCount;
+
+        fineData.fines.forEach(item => {
+
+            const text = `${item.memberId}
+                          ${item.memberName}
+                          ${item.book}
+                          ${item.amount}
+                          ${item.status}`.toLowerCase();
+
+            if (search && !text.includes(search.toLowerCase()))
+                return;
+
+            tbody.innerHTML += `
+
+            <tr>
+
+                <td>${item.memberId}</td>
+
+                <td>${item.memberName}</td>
+
+                <td>${item.book}</td>
+
+                <td>₹${item.amount}</td>
+
+                <td class="${item.status==="Paid"
+                        ? "status-paid"
+                        : "status-pending"}">
+
+                    ${item.status}
+
+                </td>
+
+                <td>
+
                 ${
-                    item.status === "Paid"
+                    item.status==="Paid"
+
                     ? `<button disabled>Paid</button>`
-                    : `<button onclick="promptPayFine(${index})">Mark Paid</button>`
+
+                    : `<button onclick="promptPayFine('${item.issueId}','${item.memberName}',${item.amount})">
+                    Mark Paid
+                    </button>`
                 }
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
 
-    if (filteredCount === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No matching fine records found.</td></tr>`;
+                </td>
+
+            </tr>
+
+            `;
+
+        });
+
+    } catch(err){
+
+        console.error(err);
+
+        alert("Unable to load fine records.");
+
     }
-
-    // Recalculate summary values based ONLY on filtered results (BUG_16)
-    document.getElementById("totalCollected").innerText = "₹" + totalCollected.toLocaleString();
-    document.getElementById("pendingFine").innerText = "₹" + pendingFine.toLocaleString();
-    document.getElementById("membersFined").innerText = filteredCount;
 
 }
 
 // Show Payment Confirmation Modal (BUG_15)
-function promptPayFine(index){
+async function promptPayFine(issueId, memberName, amount) {
 
-    const fines = window.DB.getFines();
-    const item = fines[index];
-    if(!item) return;
+    currentIssueIdToPay = issueId;
 
-    currentFineIndexToPay = index;
-
-    const msg = `Member: ${item.memberName || item.name}\nBook: ${item.book}\nFine Amount: ₹${item.amount}\n\nConfirm payment processing?`;
-    document.getElementById("payFineModalMsg").innerText = `Confirm fine payment of ₹${item.amount} for ${item.memberName || item.name}?`;
+    document.getElementById("payFineModalMsg").innerText =
+        `Confirm fine payment of ₹${amount} for ${memberName}?`;
 
     const modalEl = document.getElementById("payFineModal");
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
 
-    document.getElementById("btnConfirmPayFine").onclick = function() {
-        const confirmBtn = this;
-        confirmBtn.disabled = true; // Prevent duplicate submission (BUG_15)
+    document.getElementById("btnConfirmPayFine").onclick = async function () {
 
-        const res = window.DB.payFine(currentFineIndexToPay);
+        this.disabled = true;
 
-        confirmBtn.disabled = false;
-        modal.hide();
+        try {
 
-        if (!res.success) {
-            alert(res.message);
-            return;
+            const response = await fetch(
+                `${API}/${currentIssueIdToPay}/pay`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${getToken()}`
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            this.disabled = false;
+            modal.hide();
+
+            alert(data.message);
+
+            if (data.success) {
+                renderFineTable(
+                    document.getElementById("searchInput").value
+                );
+            }
+
+        } catch (err) {
+
+            console.error(err);
+
+            this.disabled = false;
+
+            modal.hide();
+
+            alert("Unable to process payment.");
+
         }
 
-        renderFineTable(document.getElementById("searchInput").value);
-        alert(res.message);
     };
 
 }
-
 // Search & Recalculate Summary Cards (BUG_16)
-function searchFine(){
-    const query = document.getElementById("searchInput").value;
-    renderFineTable(query);
+function searchFine() {
+
+    renderFineTable(
+        document.getElementById("searchInput").value
+    );
+
 }
 
 document.addEventListener("DOMContentLoaded", function() {

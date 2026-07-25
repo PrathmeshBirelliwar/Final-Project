@@ -11,7 +11,7 @@
     <!-- Custom Theme CSS -->
     <link rel="stylesheet" href="css/style.css">
 
-    <script src="js/db.js"></script>
+    
     <script src="js/auth.js"></script>
 </head>
 
@@ -104,110 +104,215 @@
 
     <script>
 
+        const API = "http://localhost:5000/api/librarians";
+
+        function getToken() {
+            return sessionStorage.getItem("token");
+        }
+
         let editingLibrarianId = null;
 
-        function displayLibrarians() {
 
-            const librarians = window.DB.getLibrarians();
-            const table = document.getElementById("tableBody");
-            table.innerHTML = "";
+        async function displayLibrarians() {
 
-            librarians.forEach(l => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-            <td>${l.id}</td>
-            <td>${l.name}</td>
-            <td>${l.email}</td>
-            <td>${l.phone}</td>
-            <td>${l.address}</td>
-            <td>
-                <button class="edit" onclick="editLibrarian('${l.id}')">Edit</button>
-                <button class="delete" onclick="deleteLibrarian('${l.id}')">Delete</button>
-            </td>
-        `;
-                table.appendChild(tr);
+    try {
+
+        const response = await fetch(API, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
+
+        const table = document.getElementById("tableBody");
+        table.innerHTML = "";
+
+        data.librarians.forEach(l => {
+
+            table.innerHTML += `
+                <tr>
+
+                    <td>${l.id}</td>
+                    <td>${l.name}</td>
+                    <td>${l.email}</td>
+                    <td>${l.phone}</td>
+                    <td>${l.address}</td>
+
+                    <td>
+
+                        <button class="edit"
+                        onclick="editLibrarian('${l.id}')">
+                        Edit
+                        </button>
+
+                        <button class="delete"
+                        onclick="deleteLibrarian('${l.id}')">
+                        Delete
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert("Unable to load librarians.");
+
+    }
+
+}   
+
+      async function saveLibrarian() {
+
+    const librarian = {
+        id: document.getElementById("lid").value,
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        password: document.getElementById("password").value
+    };
+
+    try {
+
+        let response;
+
+        if (editingLibrarianId) {
+
+            response = await fetch(`${API}/${editingLibrarianId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getToken()}`
+                },
+                body: JSON.stringify(librarian)
+            });
+
+        } else {
+
+            response = await fetch(API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getToken()}`
+                },
+                body: JSON.stringify(librarian)
             });
 
         }
 
-        async function saveLibrarian() {
+        const data = await response.json();
 
-            const id = document.getElementById("lid").value;
-            const name = document.getElementById("name").value;
-            const email = document.getElementById("email").value;
-            const phone = document.getElementById("phone").value;
-            const address = document.getElementById("address").value;
-            const password = document.getElementById("password").value;
+        alert(data.message);
 
-            let res;
-            if (editingLibrarianId) {
-                // Edit Mode: Password is optional during edit (BUG_12)
-                res = await window.DB.updateLibrarian(editingLibrarianId, {
-                    id,
-                    name,
-                    email,
-                    phone,
-                    address,
-                    password
-                });
-            } else {
-                // Add Mode: Unique Email & Phone Check (BUG_11)
-                res = await window.DB.addLibrarian({
-                    id,
-                    name,
-                    email,
-                    phone,
-                    address,
-                    password
-                });
-            }
-
-            if (!res.success) {
-                alert(res.message);
-                return;
-            }
-
+        if (data.success) {
             displayLibrarians();
             clearForm();
-            alert(res.message);
-
         }
 
-        function editLibrarian(id) {
+    } catch (err) {
 
-            const librarians = window.DB.getLibrarians();
-            const l = librarians.find(item => item.id.toLowerCase() === id.toLowerCase());
+        console.error(err);
+        alert("Unable to save librarian.");
 
-            if (!l) return;
+    }
 
-            editingLibrarianId = l.id;
+}
 
-            document.getElementById("lid").value = l.id;
-            document.getElementById("name").value = l.name;
-            document.getElementById("email").value = l.email;
-            document.getElementById("phone").value = l.phone;
-            document.getElementById("address").value = l.address;
+       async function editLibrarian(id) {
 
-            // NEVER expose existing password or password hash (BUG_12)
-            document.getElementById("password").value = "";
-            document.getElementById("password").placeholder = "Leave blank to keep existing password";
+    try {
 
-            document.getElementById("btnSaveLibrarian").innerText = "Update Librarian";
-
-            window.scrollTo({ top: 0, behavior: "smooth" });
-
-        }
-
-        function deleteLibrarian(id) {
-
-            if (confirm(`Are you sure you want to delete librarian ID "${id}"?`)) {
-                const res = window.DB.deleteLibrarian(id);
-                displayLibrarians();
-                clearForm();
-                alert(res.message);
+        const response = await fetch(API, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
             }
+        });
 
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.message);
+            return;
         }
+
+        const l = data.librarians.find(lib => lib.id === id);
+
+        if (!l) return;
+
+        editingLibrarianId = l.id;
+
+        document.getElementById("lid").value = l.id;
+        document.getElementById("name").value = l.name;
+        document.getElementById("email").value = l.email;
+        document.getElementById("phone").value = l.phone;
+        document.getElementById("address").value = l.address;
+
+        // Password field always blank while editing
+        document.getElementById("password").value = "";
+        document.getElementById("password").placeholder =
+            "Leave blank to keep existing password";
+
+        document.getElementById("btnSaveLibrarian").innerText =
+            "Update Librarian";
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Unable to load librarian.");
+
+    }
+
+}
+
+       async function deleteLibrarian(id) {
+
+    if (!confirm(`Are you sure you want to delete librarian ID "${id}"?`)) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`${API}/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
+
+        const data = await response.json();
+
+        alert(data.message);
+
+        if (data.success) {
+            displayLibrarians();
+            clearForm();
+        }
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Unable to delete librarian.");
+
+    }
+
+}
 
         function searchLibrarian() {
 

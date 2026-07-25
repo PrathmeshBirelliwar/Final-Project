@@ -197,18 +197,43 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-function renderDashboardStats() {
-    if (!window.DB) return;
-    const stats = window.DB.getStats();
+async function renderDashboardStats() {
+    try {
+        const token = sessionStorage.getItem("token");
 
-    document.getElementById("statTotalBooks").innerText = stats.totalBooks;
-    document.getElementById("statTotalMembers").innerText = stats.totalMembers;
-    document.getElementById("statLibrarians").innerText = stats.totalLibrarians;
-    document.getElementById("statIssuedBooks").innerText = stats.issuedBooks;
-    document.getElementById("statReturnedBooks").innerText = stats.returnedBooks;
-    document.getElementById("statPendingReturns").innerText = stats.pendingReturns;
-    document.getElementById("statFineCollection").innerText = "₹" + stats.totalCollectedFines.toLocaleString();
-    document.getElementById("statBackupStatus").innerText = stats.lastBackupDate !== "None" ? stats.lastBackupDate : "Ready";
+        const response = await fetch("http://localhost:5000/api/stats/admin", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
+
+        const stats = data.stats;
+
+        document.getElementById("statTotalBooks").innerText = stats.totalBooks;
+        document.getElementById("statTotalMembers").innerText = stats.totalMembers;
+        document.getElementById("statLibrarians").innerText = stats.totalLibrarians;
+        document.getElementById("statIssuedBooks").innerText = stats.issuedBooks;
+        document.getElementById("statReturnedBooks").innerText = stats.returnedBooks;
+        document.getElementById("statPendingReturns").innerText = stats.pendingReturns;
+        document.getElementById("statFineCollection").innerText =
+            "₹" + stats.totalCollectedFines.toLocaleString();
+
+        document.getElementById("statBackupStatus").innerText =
+            stats.lastBackupDate === "None"
+                ? "Ready"
+                : new Date(stats.lastBackupDate).toLocaleDateString();
+
+    } catch (err) {
+        console.error(err);
+        alert("Unable to load dashboard statistics.");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", renderDashboardStats);

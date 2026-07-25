@@ -11,7 +11,7 @@
 <!-- Custom Theme CSS -->
 <link rel="stylesheet" href="css/style.css">
 
-<script src="js/db.js"></script>
+
 <script src="js/auth.js"></script>
 </head>
 
@@ -106,94 +106,207 @@ onkeyup="searchMember()">
 
 <script>
 
-let editingMemberId = null;
+const API = "http://localhost:5000/api/members";
 
-function loadMembers() {
-    const members = window.DB.getMembers();
-    const tbody = document.getElementById("memberTableBody");
-    tbody.innerHTML = "";
-
-    members.forEach(member => {
-        const row = tbody.insertRow();
-        row.innerHTML = `
-            <td>${member.id}</td>
-            <td>${member.name}</td>
-            <td>${member.email}</td>
-            <td>${member.phone}</td>
-            <td>${member.department || '-'}</td>
-            <td>${member.type}</td>
-            <td>
-                <button class="edit" onclick="editMember('${member.id}')">
-                    Update
-                </button>
-
-                <button class="delete" onclick="deleteMember('${member.id}')">
-                    Delete
-                </button>
-            </td>
-        `;
-    });
+function getToken() {
+    return sessionStorage.getItem("token");
 }
 
-function saveMember(){
+let editingMemberId = null;
 
-    const id = document.getElementById("memberId").value;
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
-    const department = document.getElementById("department").value;
-    const type = document.getElementById("type").value;
+async function loadMembers() {
 
-    let res;
-    if (editingMemberId) {
-        // Edit Mode
-        res = window.DB.updateMember(editingMemberId, { id, name, email, phone, department, type });
-    } else {
-        // Add Mode: Unique Member ID check (BUG_13) & Strong Validation (BUG_14)
-        res = window.DB.addMember({ id, name, email, phone, department, type });
+    try {
+
+        const response = await fetch(API, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
+
+        const tbody = document.getElementById("memberTableBody");
+        tbody.innerHTML = "";
+
+        data.members.forEach(member => {
+
+            const row = tbody.insertRow();
+
+            row.innerHTML = `
+                <td>${member.id}</td>
+                <td>${member.name}</td>
+                <td>${member.email}</td>
+                <td>${member.phone}</td>
+                <td>${member.department ?? "-"}</td>
+                <td>${member.type}</td>
+
+                <td>
+
+                    <button class="edit"
+                    onclick="editMember('${member.id}')">
+                    Update
+                    </button>
+
+                    <button class="delete"
+                    onclick="deleteMember('${member.id}')">
+                    Delete
+                    </button>
+
+                </td>
+            `;
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert("Unable to load members.");
+
     }
 
-    if (!res.success) {
-        alert(res.message);
+}
+
+async function saveMember() {
+
+    const member = {
+        id: document.getElementById("memberId").value,
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        department: document.getElementById("department").value,
+        type: document.getElementById("type").value
+    };
+
+    try {
+
+        let response;
+
+        if (editingMemberId) {
+
+            response = await fetch(`${API}/${editingMemberId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getToken()}`
+                },
+                body: JSON.stringify(member)
+            });
+
+        } else {
+
+            response = await fetch(API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getToken()}`
+                },
+                body: JSON.stringify(member)
+            });
+
+        }
+
+        const data = await response.json();
+
+        alert(data.message);
+
+        if (data.success) {
+            loadMembers();
+            clearForm();
+        }
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Unable to save member.");
+
+    }
+
+}
+
+async function editMember(id) {
+
+    try {
+
+        const response = await fetch(API, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
+
+        const m = data.members.find(member => member.id === id);
+
+        if (!m) return;
+
+        editingMemberId = m.id;
+
+        document.getElementById("memberId").value = m.id;
+        document.getElementById("name").value = m.name;
+        document.getElementById("email").value = m.email;
+        document.getElementById("phone").value = m.phone;
+        document.getElementById("department").value = m.department || "";
+        document.getElementById("type").value = m.type;
+
+        document.getElementById("formTitle").innerText = "Edit Member";
+        document.getElementById("btnSaveMember").innerHTML =
+            `<i class="fa-solid fa-user-check me-1"></i> Update Member`;
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Unable to load member.");
+
+    }
+
+}
+
+async function deleteMember(id) {
+
+    if (!confirm(`Are you sure you want to delete member ID "${id}"?`)) {
         return;
     }
 
-    loadMembers();
-    clearForm();
-    alert(res.message);
+    try {
 
-}
+        const response = await fetch(`${API}/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
 
-function editMember(id){
+        const data = await response.json();
 
-    const members = window.DB.getMembers();
-    const m = members.find(item => item.id.toLowerCase() === id.toLowerCase());
+        alert(data.message);
 
-    if (!m) return;
+        if (data.success) {
+            loadMembers();
+            clearForm();
+        }
 
-    editingMemberId = m.id;
+    } catch (err) {
 
-    document.getElementById("memberId").value = m.id;
-    document.getElementById("name").value = m.name;
-    document.getElementById("email").value = m.email;
-    document.getElementById("phone").value = m.phone;
-    document.getElementById("department").value = m.department || "";
-    document.getElementById("type").value = m.type || "Student";
+        console.error(err);
+        alert("Unable to delete member.");
 
-    document.getElementById("formTitle").innerText = "Edit Member";
-    document.getElementById("btnSaveMember").innerHTML = `<i class="fa-solid fa-user-check me-1"></i> Update Member`;
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-}
-
-function deleteMember(id){
-
-    if(confirm(`Are you sure you want to delete member ID "${id}"?`)){
-        const res = window.DB.deleteMember(id);
-        loadMembers();
-        clearForm();
-        alert(res.message);
     }
 
 }

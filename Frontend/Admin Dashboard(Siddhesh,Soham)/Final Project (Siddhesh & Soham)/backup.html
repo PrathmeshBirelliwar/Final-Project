@@ -11,7 +11,7 @@
 
 <link rel="stylesheet" href="css/style.css">
 
-<script src="js/db.js"></script>
+
 <script src="js/auth.js"></script>
 </head>
 
@@ -111,137 +111,132 @@ Restore Backup
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    const API = "http://localhost:5000/api/backups";
 
-function renderBackupHistory() {
-    const history = window.DB.getBackups();
-    const historyTable = document.getElementById("historyTable");
-    
-    // Clear container first to prevent duplicates (BUG_07 fix)
-    historyTable.innerHTML = "";
-
-    if (history.length === 0) {
-        historyTable.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No backup history available.</td></tr>`;
-        document.getElementById("lastBackup").innerText = "None";
-        return;
-    }
-
-    document.getElementById("lastBackup").innerText = history[0].date;
-
-    history.forEach(item => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${item.date}</td>
-            <td>${item.fileName}</td>
-            <td>${item.size || '3.0 MB'}</td>
-            <td><span class="badge bg-success">${item.status || 'Completed'}</span></td>
-        `;
-        historyTable.appendChild(tr);
-    });
+function getToken() {
+    return sessionStorage.getItem("token");
 }
 
-function backupDatabase(){
 
-    let now = new Date();
+async function renderBackupHistory() {
 
-    let day = String(now.getDate()).padStart(2,'0');
-    let month = String(now.getMonth()+1).padStart(2,'0');
-    let year = now.getFullYear();
+    try {
 
-    let fileName = "library_backup_"+day+"_"+month+"_"+year+".sql";
+        const response = await fetch(API, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
 
-    const books = window.DB.getBooks();
-    const members = window.DB.getMembers();
-    const librarians = window.DB.getLibrarians();
-    const fines = window.DB.getFines();
+        const data = await response.json();
 
-    let backupContent =
-`-- Smart Library Management System Backup
--- Generated on: ${now.toLocaleString()}
-
-CREATE DATABASE smart_library;
-
--- BOOKS SCHEMA & DATA
--- JSON_DATA: ${JSON.stringify(books)}
-
--- MEMBERS SCHEMA & DATA
--- JSON_DATA: ${JSON.stringify(members)}
-
--- LIBRARIANS SCHEMA & DATA
--- JSON_DATA: ${JSON.stringify(librarians)}
-
--- FINES SCHEMA & DATA
--- JSON_DATA: ${JSON.stringify(fines)}
-`;
-
-    let blob = new Blob([backupContent],{type:"text/plain"});
-
-    let link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = fileName;
-    link.click();
-
-    // Store single backup record in DB engine
-    window.DB.addBackupRecord(fileName, "3.2 MB");
-
-    renderBackupHistory();
-
-    alert("Database Backup Created Successfully!");
-
-}
-
-function restoreDatabase(){
-    document.getElementById("restoreFile").click();
-}
-
-function restoreSelectedFile(e){
-
-    const file = e.target.files[0];
-    if(!file) return;
-
-    // Validate Extension (BUG_08)
-    if (!file.name.toLowerCase().endsWith(".sql")) {
-        alert("Invalid file format! Please upload a valid SQL file (.sql).");
-        e.target.value = "";
-        return;
-    }
-
-    // Validate Size
-    if (file.size === 0) {
-        alert("The selected file is empty. Please upload a valid system backup.");
-        e.target.value = "";
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        const content = event.target.result;
-
-        // Validation against invalid SQL files (BUG_08)
-        const check = window.DB.restoreBackup(content, file.name);
-        if (!check.success) {
-            alert(check.message);
-            e.target.value = "";
+        if (!data.success) {
+            alert(data.message);
             return;
         }
 
-        // Confirmation before overwrite
-        const confirmRestore = confirm(`WARNING: Restoring a backup will overwrite current system data.\n\nBackup File: ${file.name}\n\nDo you want to continue?`);
+        const historyTable = document.getElementById("historyTable");
+        historyTable.innerHTML = "";
 
-        if (!confirmRestore) {
-            e.target.value = "";
+        if (data.backups.length === 0) {
+
+            historyTable.innerHTML =
+                `<tr><td colspan="4" class="text-center">No backup history available.</td></tr>`;
+
+            document.getElementById("lastBackup").innerText = "None";
+
             return;
+
         }
 
-        // Add backup record & refresh history
-        window.DB.addBackupRecord(file.name + " (Restored)", (file.size / 1024 / 1024).toFixed(1) + " MB");
-        renderBackupHistory();
+        document.getElementById("lastBackup").innerText =
+            new Date(data.backups[0].date).toLocaleString();
 
-        alert(`Database Restored Successfully!\n\nBackup File: ${file.name}`);
-        e.target.value = "";
-    };
+        data.backups.forEach(item => {
 
-    reader.readAsText(file);
+            historyTable.innerHTML += `
+
+            <tr>
+
+                <td>${new Date(item.date).toLocaleString()}</td>
+
+                <td>
+
+                    <a href="${API}/${item.id}/download"
+                       target="_blank">
+
+                        ${item.fileName}
+
+                    </a>
+
+                </td>
+
+                <td>${item.size}</td>
+
+                <td>
+
+                    <span class="badge bg-success">
+
+                        ${item.status}
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+            `;
+
+        });
+
+    } catch(err){
+
+        console.error(err);
+
+        alert("Unable to load backups.");
+
+    }
+
 }
+
+async function backupDatabase() {
+
+    try {
+
+        const response = await fetch(API, {
+
+            method: "POST",
+
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+
+        });
+
+        const data = await response.json();
+
+        alert(data.message);
+
+        if (data.success) {
+
+            renderBackupHistory();
+
+        }
+
+    } catch(err){
+
+        console.error(err);
+
+        alert("Unable to create backup.");
+
+    }
+
+}
+
+function restoreDatabase() {
+    alert("Restore feature is not available in the current backend.");
+}
+
 
 document.addEventListener("DOMContentLoaded", renderBackupHistory);
 
