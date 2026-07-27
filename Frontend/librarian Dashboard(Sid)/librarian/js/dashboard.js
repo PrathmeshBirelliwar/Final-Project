@@ -2,11 +2,14 @@
 // LOGIN PROTECTION
 // ==========================================
 
+const API = "http://localhost:5000/api/stats/librarian";
 
-if(sessionStorage.getItem("isLoggedIn") !== "true"){
+function getToken() {
+    return sessionStorage.getItem("token");
+}
 
+if (!getToken()) {
     window.location.href = "login.html";
-
 }
 
 // ==========================================
@@ -15,121 +18,107 @@ if(sessionStorage.getItem("isLoggedIn") !== "true"){
 
 document.addEventListener("DOMContentLoaded", function(){
 
+    updateDashboard();
+    loadRecentBooks();
+
     console.log("Librarian Dashboard Loaded Successfully");
 
     // ==========================================
     // DATABASE
     // ==========================================
 
-    const books = DATABASE.books;
-
-    const students = DATABASE.students;
-
-    const issuedBooks = DATABASE.issuedBooks;
-
-    // ==========================================
-// LOAD RECENT ISSUED BOOKS
-// ==========================================
-
-function loadRecentBooks(){
-
-    if(!tableBody){
-
-        return;
-
-    }
-
-    tableBody.innerHTML = "";
-
-    issuedBooks.slice().reverse().slice(0,5).forEach(function(issue){
-
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-
-            <td>${issue.bookId}</td>
-
-            <td>${issue.bookName}</td>
-
-            <td>${issue.studentName}</td>
-
-            <td>${issue.issueDate}</td>
-
-            <td>
-
-                <span class="status-badge ${issue.status.toLowerCase()}">
-
-                    ${issue.status}
-
-                </span>
-
-            </td>
-
-        `;
-
-        tableBody.appendChild(row);
-
-    });
-
-}
-
     // ==========================================
     // UPDATE DASHBOARD
     // ==========================================
 
-    function updateDashboard(){
+async function updateDashboard() {
 
-        const totalBooks = document.getElementById("totalBooks");
+    try {
 
-        const availableBooks = document.getElementById("availableBooks");
+        const response = await fetch(API, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
 
-        const issuedBooksCard = document.getElementById("issuedBooks");
-
-        const totalStudents = document.getElementById("totalStudents");
-
-        if(totalBooks){
-
-            totalBooks.textContent = books.length;
-
+        if (!response.ok) {
+            throw new Error("Failed to load dashboard");
         }
 
-        if(totalStudents){
+        const result = await response.json();
 
-            totalStudents.textContent = students.length;
+        console.log(result);
 
-        }
+        const stats = result.stats || {};
+        console.log("Stats =", stats);
 
-        if(issuedBooksCard){
+        document.getElementById("totalBooks").textContent =
+            stats.totalBooks || 0;
 
-            const activeIssues = issuedBooks.filter(function(issue){
+        document.getElementById("totalStudents").textContent =
+            stats.totalStudents || 0;
 
-                return issue.status === "Issued";
+        document.getElementById("issuedBooks").textContent =
+            stats.issuedToday || 0;
 
-            });
+        // Backend availableBooks nahi bhej raha
+        document.getElementById("availableBooks").textContent =
+            stats.totalBooks || 0;
 
-            issuedBooksCard.textContent = activeIssues.length;
+    } catch (err) {
 
-        }
-
-        if(availableBooks){
-
-            let totalAvailable = 0;
-
-            books.forEach(function(book){
-
-                totalAvailable += Number(book.quantity);
-
-            });
-
-            availableBooks.textContent = totalAvailable;
-
-        }
+        console.error(err);
 
     }
 
-    updateDashboard();
+}
 
-loadRecentBooks();
+
+async function loadRecentBooks() {
+
+    const tableBody = document.querySelector(".books-table tbody");
+
+    if (!tableBody) return;
+
+    tableBody.innerHTML = "";
+
+    try {
+
+        const response = await fetch(API, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
+
+        const data = await response.json();
+
+        const recentBooks = data.recentIssues || [];
+
+        recentBooks.forEach(issue => {
+
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${issue.book_id}</td>
+                    <td>${issue.book_title}</td>
+                    <td>${issue.member_name}</td>
+                    <td>${issue.issue_date}</td>
+                    <td>
+                        <span class="status-badge ${issue.status.toLowerCase()}">
+                            ${issue.status}
+                        </span>
+                    </td>
+                </tr>
+            `;
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+}
 
     // ==========================================
     // SEARCH
@@ -239,8 +228,6 @@ function loadProfile(){
 
     document.getElementById("modalPhone").textContent = profile.phone;
 
-    document.getElementById("modalLibrary").textContent = profile.library;
-
     document.getElementById("editName").value = profile.name;
 
     document.getElementById("editEmail").value = profile.email;
@@ -291,7 +278,8 @@ document.getElementById("logoutBtn").addEventListener("click", function(){
 
     }
 
-   sessionStorage.removeItem("isLoggedIn");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
 
     window.location.href = "login.html";
 

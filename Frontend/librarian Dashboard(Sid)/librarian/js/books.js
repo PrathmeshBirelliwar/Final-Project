@@ -1,8 +1,10 @@
 // ==========================================
-// DATABASE
+// LIBRARY API
 // ==========================================
 
-let books = JSON.parse(localStorage.getItem("books")) || [];
+const LibAPI = window.LibAPI;
+
+let books = [];
 
 console.log("books.js loaded");
 // ==========================================
@@ -74,112 +76,129 @@ const bookForm = document.getElementById("bookForm");
 // SAVE BOOK
 // ==========================================
 
-bookForm.addEventListener("submit", function(event){
+bookForm.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
-    const bookName = document.getElementById("bookName").value.trim();
+    const body = {
+    name: document.getElementById("bookName").value.trim(),
+    author: document.getElementById("authorName").value.trim(),
+    category: document.getElementById("bookCategory").value,
+    isbn: document.getElementById("bookISBN").value.trim(),
+    quantity: Number(document.getElementById("bookQuantity").value)
+};
 
-    const authorName = document.getElementById("authorName").value.trim();
+    try {
 
-    const category = document.getElementById("bookCategory").value;
+        if (editIndex === null) {
 
-    const quantity = document.getElementById("bookQuantity").value;
+            await LibAPI.addBook(body);
 
-    if(bookName === "" || authorName === "" || quantity === ""){
+        } else {
 
-        alert("Please fill all required fields.");
+            await LibAPI.updateBook(books[editIndex].id, body);
 
-        return;
+            editIndex = null;
+        }
+
+        bookForm.reset();
+        modal.style.display = "none";
+
+        await loadBooks();
+
+    } catch (err) {
+
+        console.error(err);
 
     }
 
-   if(editIndex !== null){
+});
 
-    books[editIndex].name = bookName;
+// ==========================================
+// LOAD BOOKS
+// ==========================================
 
-    books[editIndex].author = authorName;
 
-    books[editIndex].category = category;
+   async function loadBooks() {
 
-    books[editIndex].quantity = quantity;
+    try {
 
-    editIndex = null;
+       books = await LibAPI.getBooks();
+
+        console.log(books);
+
+        renderBooks(books);
+        updateTotalBooks();
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+}
+loadBooks();
+
+function renderBooks(bookList) {
+
+    const tableBody = document.querySelector(".books-table tbody");
+
+    tableBody.innerHTML = "";
+
+    bookList.forEach((book, index) => {
+
+        tableBody.innerHTML += `
+            <tr>
+                <td>${book.id}</td>
+                <td>${book.name}</td>
+                <td>${book.author}</td>
+                <td>${book.category}</td>
+                <td>${book.quantity}</td>
+                <td>
+                    <span class="status ${book.quantity > 0 ? "available" : "issued"}">
+                        ${book.quantity > 0 ? "Available" : "Out of Stock"}
+                    </span>
+                </td>
+                <td>
+                    <button class="edit-btn" data-index="${index}">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+
+                    <button class="delete-btn" data-id="${book.id}">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
 
 }
 
-else{
 
-    const book = {
-
-        id: "BK" + String(Date.now()).slice(-5),
-
-        name: bookName,
-
-        author: authorName,
-
-        category: category,
-
-        quantity: quantity
-
-    };
-
-    books.push(book);
-
-}
-
-    localStorage.setItem(
-
-        "books",
-
-        JSON.stringify(books)
-
-    );
-
-    loadBooks();
-    updateTotalBooks();
-
-    bookForm.reset();
-
-    modal.style.display = "none";
-
-});// ==========================================
+// ==========================================
 /// ==========================================
 // DELETE BOOK
 // ==========================================
 
-document.addEventListener("click", function(event){
+document.addEventListener("click", async function (event) {
 
-    const deleteButton = event.target.closest(".delete-btn");
+    const button = event.target.closest(".delete-btn");
 
-    if(!deleteButton){
+    if (!button) return;
 
-        return;
+    if (!confirm("Delete this book?")) return;
+
+    try {
+
+       await LibAPI.deleteBook(button.dataset.id);
+
+        await loadBooks();
+
+    } catch (err) {
+
+        console.error(err);
 
     }
-
-    const index = deleteButton.dataset.index;
-
-    const confirmDelete = confirm("Are you sure you want to delete this book?");
-
-    if(!confirmDelete){
-
-        return;
-
-    }
-
-    books.splice(index,1);
-
-    localStorage.setItem(
-
-        "books",
-
-        JSON.stringify(books)
-
-    );
-
-    loadBooks();
-    updateTotalBooks();
 
 });
 // ==========================================
@@ -201,7 +220,7 @@ document.addEventListener("click", function(event){
 
     const book = books[editIndex];
 
-    document.getElementById("bookName").value = book.name;
+   document.getElementById("bookName").value = book.name;
 
     document.getElementById("authorName").value = book.author;
 
@@ -212,69 +231,7 @@ document.addEventListener("click", function(event){
     modal.style.display = "flex";
 
 });
-// ==========================================
-// LOAD BOOKS
-// ==========================================
 
-function loadBooks(){
-
-    const tableBody = document.querySelector(".books-table tbody");
-
-    tableBody.innerHTML = "";
-
-    books.forEach(function(book,index){
-
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-
-            <td>${book.id}</td>
-
-            <td>${book.name}</td>
-
-            <td>${book.author}</td>
-
-            <td>${book.category}</td>
-
-            <td>${book.quantity}</td>
-
-            <td>
-
-                <span class="status available">
-
-                    Available
-
-                </span>
-
-            </td>
-
-            <td>
-
-                <button class="edit-btn" data-index="${index}">
-
-                    <i class="fa-solid fa-pen"></i>
-
-                </button>
-
-                <button class="delete-btn" data-index="${index}">
-
-                    <i class="fa-solid fa-trash"></i>
-
-                </button>
-
-            </td>
-
-        `;
-
-        tableBody.appendChild(row);
-
-    });
-
-}
-
-loadBooks();
-
-updateTotalBooks();
 
 // ==========================================
 // TOTAL BOOKS
@@ -287,3 +244,24 @@ function updateTotalBooks(){
 
 }
 
+const searchBook = document.getElementById("searchBook");
+
+searchBook.addEventListener("input", function () {
+
+    const keyword = this.value.toLowerCase().trim();
+
+    const filteredBooks = books.filter(book =>
+
+        book.id.toLowerCase().includes(keyword) ||
+
+       book.name.toLowerCase().includes(keyword) ||
+
+        book.author.toLowerCase().includes(keyword) ||
+
+        book.category.toLowerCase().includes(keyword)
+
+    );
+
+    renderBooks(filteredBooks);
+
+});

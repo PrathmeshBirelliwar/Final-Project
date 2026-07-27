@@ -59,65 +59,84 @@ togglePassword.addEventListener("click", function(){
 
 });
 
+
 // ==========================================
-// LOGIN
+// LOGIN (BACKEND)
 // ==========================================
 
-loginForm.addEventListener("submit", function(event){
+loginForm.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
-    const user = username.value.trim();
+    loginError.textContent = "";
 
-    const pass = password.value.trim();
+    try {
 
-    if(
+        const response = await fetch("http://localhost:5000/api/auth/login", {
 
-        user === defaultUser.username &&
+            method: "POST",
 
-        pass === defaultUser.password
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-    ){
+            body: JSON.stringify({
 
+                identifier: username.value.trim(),
+
+                password: password.value.trim(),
+
+                role: "Admin"
+
+            })
+
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+
+            loginError.textContent =
+                result.message || "Login failed.";
+
+            return;
+
+        }
+
+        // Save JWT Token
+        sessionStorage.setItem("token", result.token);
+
+        // Save Logged In User
         sessionStorage.setItem(
+            "user",
+            JSON.stringify(result.user)
+        );
 
-    "isLoggedIn",
-
-    "true"
-
-); 
-
-        if(rememberMe.checked){
+        // Remember Username
+        if (rememberMe.checked) {
 
             localStorage.setItem(
-
                 "rememberUser",
-
-                user
-
+                username.value.trim()
             );
 
-        }
-
-        else{
+        } else {
 
             localStorage.removeItem(
-
                 "rememberUser"
-
             );
 
         }
 
+        // Go Dashboard
         window.location.href = "index.html";
 
-    }
+    } catch (err) {
 
-    else{
+        console.error(err);
 
         loginError.textContent =
-
-        "Invalid username or password.";
+            "Unable to connect to server.";
 
     }
 

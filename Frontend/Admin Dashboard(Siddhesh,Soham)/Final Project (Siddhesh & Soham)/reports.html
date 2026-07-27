@@ -23,7 +23,6 @@
 }
 </style>
 
-<script src="js/db.js"></script>
 <script src="js/auth.js"></script>
 </head>
 <body>
@@ -120,92 +119,98 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    const API = "http://localhost:5000/api/stats/admin";
 
-function renderReports() {
-    if (!window.DB) return;
-
-    const stats = window.DB.getStats();
-
-    document.getElementById("reportTotalBooks").innerText = stats.totalBooks;
-    document.getElementById("reportIssuedBooks").innerText = stats.issuedBooks;
-    document.getElementById("reportReturnedBooks").innerText = stats.returnedBooks;
-    document.getElementById("reportOverdueBooks").innerText = stats.pendingReturns;
-
-    const monthlyData = [
-        { month: "January", added: 40, issued: 120, returned: 110, members: 20, fine: 1000 },
-        { month: "February", added: 30, issued: 98, returned: 92, members: 15, fine: 850 },
-        { month: "Current Month", added: stats.totalBooks, issued: stats.issuedBooks, returned: stats.returnedBooks, members: stats.totalMembers, fine: stats.totalCollectedFines }
-    ];
-
-    const tbody = document.getElementById("reportTableBody");
-    tbody.innerHTML = "";
-
-    monthlyData.forEach(m => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${m.month}</td>
-            <td>${m.added}</td>
-            <td>${m.issued}</td>
-            <td>${m.returned}</td>
-            <td>${m.members}</td>
-            <td>₹${m.fine.toLocaleString()}</td>
-        `;
-        tbody.appendChild(tr);
-    });
+function getToken() {
+    return sessionStorage.getItem("token");
 }
 
-function downloadReport(){
+async function renderReports() {
 
-    const stats = window.DB.getStats();
-    const now = new Date().toLocaleString();
+    try {
 
-    let report=`SMART LIBRARY MANAGEMENT SYSTEM - REALTIME REPORT
-Generated On: ${now}
-=====================================================
+        const response = await fetch(API, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`
+            }
+        });
 
-SYSTEM SUMMARY:
-- Total Books Registered : ${stats.totalBooks}
-- Total Members         : ${stats.totalMembers}
-- Total Librarians      : ${stats.totalLibrarians}
-- Currently Issued Books: ${stats.issuedBooks}
-- Returned Books        : ${stats.returnedBooks}
-- Overdue Books         : ${stats.pendingReturns}
-- Total Fine Collected  : ₹${stats.totalCollectedFines.toLocaleString()}
-- Pending Fines         : ₹${stats.pendingFines.toLocaleString()}
+        const data = await response.json();
 
------------------------------------------------------
-MONTHLY PERFORMANCE SUMMARY:
------------------------------------------------------
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
 
-[January]
-- Books Added   : 40
-- Books Issued  : 120
-- Books Returned: 110
-- New Members   : 20
-- Fine Collected: ₹1,000
+        const stats = data.stats;
 
-[February]
-- Books Added   : 30
-- Books Issued  : 98
-- Books Returned: 92
-- New Members   : 15
-- Fine Collected: ₹850
+        document.getElementById("reportTotalBooks").innerText = stats.totalBooks;
+        document.getElementById("reportIssuedBooks").innerText = stats.issuedBooks;
+        document.getElementById("reportReturnedBooks").innerText = stats.returnedBooks;
+        document.getElementById("reportOverdueBooks").innerText = stats.pendingReturns;
 
-[Current Month (Live System Data)]
-- Books Added   : ${stats.totalBooks}
-- Books Issued  : ${stats.issuedBooks}
-- Books Returned: ${stats.returnedBooks}
-- New Members   : ${stats.totalMembers}
-- Fine Collected: ₹${stats.totalCollectedFines.toLocaleString()}
+        document.getElementById("reportTableBody").innerHTML = `
+            <tr>
+                <td>Current Month</td>
+                <td>${stats.totalBooks}</td>
+                <td>${stats.issuedBooks}</td>
+                <td>${stats.returnedBooks}</td>
+                <td>${stats.totalMembers}</td>
+                <td>₹${stats.totalCollectedFines}</td>
+            </tr>
+        `;
 
-=====================================================
-Report generated dynamically by Smart Library System
+    } catch (err) {
+
+        console.error(err);
+        alert("Unable to load reports.");
+
+    }
+
+}
+
+async function downloadReport() {
+
+    const response = await fetch(API, {
+        headers: {
+            Authorization: `Bearer ${getToken()}`
+        }
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+        alert("Unable to generate report.");
+        return;
+    }
+
+    const stats = data.stats;
+
+    const report = `SMART LIBRARY REPORT
+
+Generated On: ${new Date().toLocaleString()}
+
+---------------------------------------
+
+Total Books      : ${stats.totalBooks}
+Issued Books     : ${stats.issuedBooks}
+Returned Books   : ${stats.returnedBooks}
+Overdue Books    : ${stats.pendingReturns}
+Members          : ${stats.totalMembers}
+Librarians       : ${stats.totalLibrarians}
+Fine Collected   : ₹${stats.totalCollectedFines}
+Pending Fines    : ₹${stats.pendingFines}
+
+---------------------------------------
 `;
 
-    let blob = new Blob([report], { type: "text/plain" });
-    let link = document.createElement("a");
+    const blob = new Blob([report], {
+        type: "text/plain"
+    });
+
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `Library_Report_${new Date().toISOString().slice(0,10)}.txt`;
+    link.download = "Library_Report.txt";
     link.click();
     URL.revokeObjectURL(link.href);
 
