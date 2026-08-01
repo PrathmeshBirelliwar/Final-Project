@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="css/style.css">
 
+<script src="js/db.js"></script>
 <script src="js/auth.js"></script>
 </head>
 
@@ -114,179 +115,109 @@ onkeyup="searchFine()">
 
 <script>
 
-const API = "http://localhost:5000/api/fines";
-const STATS_API = "http://localhost:5000/api/stats/admin";
+let currentFineIndexToPay = null;
 
-function getToken() {
-    return sessionStorage.getItem("token");
-}
+async function renderFineTable(filteredQuery = ""){
 
-let currentIssueIdToPay = null;
+    await window.DB.ready();
+    const fines = window.DB.getFines();
+    const tbody = document.getElementById("fineTableBody");
+    tbody.innerHTML = "";
 
-async function renderFineTable(search = "") {
+    let totalCollected = 0;
+    let pendingFine = 0;
+    let filteredCount = 0;
 
-    try {
+    const cleanQuery = filteredQuery.trim().toLowerCase();
 
-        const [fineRes, statsRes] = await Promise.all([
+    fines.forEach((item, index) => {
 
-            fetch(API, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            }),
-
-            fetch(STATS_API, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            })
-
-        ]);
-
-        const fineData = await fineRes.json();
-        const statsData = await statsRes.json();
-
-        if (!fineData.success || !statsData.success) {
-            alert("Unable to load fine records.");
+        const searchableText = `${item.memberId} ${item.memberName} ${item.book} ${item.amount} ${item.status}`.toLowerCase();
+        
+        // Filter logic (BUG_16)
+        if (cleanQuery !== "" && !searchableText.includes(cleanQuery)) {
             return;
         }
 
-        const tbody = document.getElementById("fineTableBody");
-        tbody.innerHTML = "";
+        filteredCount++;
 
-        document.getElementById("totalCollected").innerText =
-            "₹" + statsData.stats.totalCollectedFines;
+        if(item.status === "Paid"){
+            totalCollected += Number(item.amount);
+        } else {
+            pendingFine += Number(item.amount);
+        }
 
-        document.getElementById("pendingFine").innerText =
-            "₹" + statsData.stats.pendingFines;
-
-        document.getElementById("membersFined").innerText =
-            statsData.stats.membersFinedCount;
-
-        fineData.fines.forEach(item => {
-
-            const text = `${item.memberId}
-                          ${item.memberName}
-                          ${item.book}
-                          ${item.amount}
-                          ${item.status}`.toLowerCase();
-
-            if (search && !text.includes(search.toLowerCase()))
-                return;
-
-            tbody.innerHTML += `
-
-            <tr>
-
-                <td>${item.memberId}</td>
-
-                <td>${item.memberName}</td>
-
-                <td>${item.book}</td>
-
-                <td>₹${item.amount}</td>
-
-                <td class="${item.status==="Paid"
-                        ? "status-paid"
-                        : "status-pending"}">
-
-                    ${item.status}
-
-                </td>
-
-                <td>
-
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${item.memberId || item.id}</td>
+            <td>${item.memberName || item.name}</td>
+            <td>${item.book}</td>
+            <td>₹${item.amount}</td>
+            <td class="${item.status === "Paid" ? "status-paid" : "status-pending"}">
+                ${item.status}
+            </td>
+            <td>
                 ${
-                    item.status==="Paid"
-
+                    item.status === "Paid"
                     ? `<button disabled>Paid</button>`
-
-                    : `<button onclick="promptPayFine('${item.issueId}','${item.memberName}',${item.amount})">
-                    Mark Paid
-                    </button>`
+                    : `<button onclick="promptPayFine(${index})">Mark Paid</button>`
                 }
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 
-                </td>
-
-            </tr>
-
-            `;
-
-        });
-
-    } catch(err){
-
-        console.error(err);
-
-        alert("Unable to load fine records.");
-
+    if (filteredCount === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No matching fine records found.</td></tr>`;
     }
+
+    // Recalculate summary values based ONLY on filtered results (BUG_16)
+    document.getElementById("totalCollected").innerText = "₹" + totalCollected.toLocaleString();
+    document.getElementById("pendingFine").innerText = "₹" + pendingFine.toLocaleString();
+    document.getElementById("membersFined").innerText = filteredCount;
 
 }
 
 // Show Payment Confirmation Modal (BUG_15)
-async function promptPayFine(issueId, memberName, amount) {
+function promptPayFine(index){
 
-    currentIssueIdToPay = issueId;
+    const fines = window.DB.getFines();
+    const item = fines[index];
+    if(!item) return;
 
-    document.getElementById("payFineModalMsg").innerText =
-        `Confirm fine payment of ₹${amount} for ${memberName}?`;
+    currentFineIndexToPay = index;
+
+    const msg = `Member: ${item.memberName || item.name}\nBook: ${item.book}\nFine Amount: ₹${item.amount}\n\nConfirm payment processing?`;
+    document.getElementById("payFineModalMsg").innerText = `Confirm fine payment of ₹${item.amount} for ${item.memberName || item.name}?`;
 
     const modalEl = document.getElementById("payFineModal");
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
 
-    document.getElementById("btnConfirmPayFine").onclick = async function () {
+    document.getElementById("btnConfirmPayFine").onclick = async function() {
+        const confirmBtn = this;
+        confirmBtn.disabled = true; // Prevent duplicate submission (BUG_15)
 
-        this.disabled = true;
+        const res = await window.DB.payFine(currentFineIndexToPay);
 
-        try {
+        confirmBtn.disabled = false;
+        modal.hide();
 
-            const response = await fetch(
-                `${API}/${currentIssueIdToPay}/pay`,
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${getToken()}`
-                    }
-                }
-            );
-
-            const data = await response.json();
-
-            this.disabled = false;
-            modal.hide();
-
-            alert(data.message);
-
-            if (data.success) {
-                renderFineTable(
-                    document.getElementById("searchInput").value
-                );
-            }
-
-        } catch (err) {
-
-            console.error(err);
-
-            this.disabled = false;
-
-            modal.hide();
-
-            alert("Unable to process payment.");
-
+        if (!res.success) {
+            alert(res.message);
+            return;
         }
 
+        await renderFineTable(document.getElementById("searchInput").value);
+        alert(res.message);
     };
 
 }
+
 // Search & Recalculate Summary Cards (BUG_16)
-function searchFine() {
-
-    renderFineTable(
-        document.getElementById("searchInput").value
-    );
-
+function searchFine(){
+    const query = document.getElementById("searchInput").value;
+    renderFineTable(query);
 }
 
 document.addEventListener("DOMContentLoaded", function() {

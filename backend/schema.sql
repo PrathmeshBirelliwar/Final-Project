@@ -70,6 +70,8 @@ CREATE TABLE IF NOT EXISTS books (
     reviews_count     INT DEFAULT 0,
     total_quantity   INT NOT NULL DEFAULT 0,
     available_quantity INT NOT NULL DEFAULT 0,
+    is_digital       TINYINT(1) NOT NULL DEFAULT 0,
+    resource_type    VARCHAR(30) DEFAULT NULL,
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT chk_available CHECK (available_quantity >= 0 AND available_quantity <= total_quantity)
@@ -136,6 +138,26 @@ CREATE TABLE IF NOT EXISTS backups (
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- SYSTEM SETTINGS  (single row — library profile + loan/fine rules,
+-- editable from the Librarian dashboard's Settings page and actually
+-- enforced by the backend, not just cosmetic display values)
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS system_settings (
+    id                    INT PRIMARY KEY DEFAULT 1,
+    library_name          VARCHAR(150) NOT NULL DEFAULT 'LibraryMS',
+    library_address       VARCHAR(255) NOT NULL DEFAULT '',
+    library_contact       VARCHAR(30)  NOT NULL DEFAULT '',
+    library_email         VARCHAR(150) NOT NULL DEFAULT '',
+    max_books_per_member  INT NOT NULL DEFAULT 3,
+    loan_days             INT NOT NULL DEFAULT 15,
+    fine_per_day          DECIMAL(6,2) NOT NULL DEFAULT 5.00,
+    updated_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT IGNORE INTO system_settings (id, library_name, library_address, library_contact, library_email)
+VALUES (1, 'Smart Library', 'Main Library Campus', '9876543210', 'admin@smartlibrary.com');
+
+-- ---------------------------------------------------------------------
 -- AUDIT LOGS
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS audit_logs (
@@ -181,3 +203,9 @@ INSERT IGNORE INTO books (id, title, author, category, publisher, isbn, publishe
 ('B012', 'Operating System Concepts', 'Abraham Silberschatz', 'Operating Systems', 'Wiley', '978-1119456339', '2018', 976, 'Fundamental operating-system principles including processes, memory, storage, and security.', 'images/operating-system.jpeg', 'Main Library - 2nd Floor', 'OS-201', 4.6, 215, 4, 0),
 ('B013', 'Artificial Intelligence: A Modern Approach', 'Stuart Russell', 'Artificial Intelligence', 'Pearson', '978-0134610993', '2021', 1152, 'A comprehensive introduction to intelligent agents, machine learning, robotics, and AI.', 'images/artificial-intelligence.jpeg', 'Main Library - 3rd Floor', 'AI-301', 4.8, 289, 5, 5),
 ('B014', 'Rich Dad Poor Dad', 'Robert T. Kiyosaki', 'Finance', 'Plata Publishing', '978-1612680194', '1997', 336, 'An introduction to personal finance, investing, and financial independence.', 'images/rich-dad-poor-dad.jpeg', 'Main Library - 1st Floor', 'F-205', 4.7, 580, 6, 6);
+
+-- Mark a handful of the catalog as digital resources (drives the Member dashboard's
+-- Digital Library page — previously that page showed hardcoded sample content).
+UPDATE books SET is_digital = 1, resource_type = 'E-Book' WHERE id IN ('B001', 'B002', 'B009');
+UPDATE books SET is_digital = 1, resource_type = 'Research' WHERE id IN ('B013');
+UPDATE books SET is_digital = 1, resource_type = 'Journal' WHERE id IN ('B006', 'B011');

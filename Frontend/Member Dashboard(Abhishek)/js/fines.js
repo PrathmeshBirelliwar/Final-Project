@@ -1,29 +1,30 @@
 let fines = [];
 let paymentFineIds = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-    fines = LibraryStore.getFines();
-    loadFines();
+document.addEventListener("DOMContentLoaded", async () => {
+    await Promise.all([window.LibraryCatalog.ready(), window.LibraryStore.ready()]);
+    await loadFines();
 });
 
-function currency(amount) { return `₹${amount}`; }
+function currency(amount) { return `\u20b9${amount}`; }
 
-function loadFines() {
+async function loadFines() {
+    fines = LibraryStore.getFines();
     const table = document.getElementById("fineTable");
     table.innerHTML = fines.map(fine => `
         <tr>
-            <td><strong>${LibraryCatalog.getById(fine.bookId)?.title || fine.book || "Library fine"}</strong></td><td>${fine.reason || "Overdue return"}</td><td>${LibraryStore.dateLabel(fine.createdDate || fine.date)}</td>
+            <td><strong>${LibraryCatalog.getById(fine.bookId)?.title || fine.book || "Library fine"}</strong></td><td>Overdue return</td><td>${LibraryStore.dateLabel(fine.createdDate)}</td>
             <td><strong>${currency(fine.amount)}</strong></td>
             <td><span class="status ${fine.status.toLowerCase()}">${fine.status}</span></td>
-            <td>${fine.status === "Pending" ? `<button class="action-btn" onclick="openPaymentModal(['${fine.id}'])">Pay Now</button>` : `<span class="completed-payment">Paid${fine.paymentMethod ? ` · ${fine.paymentMethod}` : ""}</span>`}</td>
+            <td>${fine.status === "Pending" ? `<button class="action-btn" onclick="openPaymentModal(['${fine.id}'])">Pay Now</button>` : `<span class="completed-payment">Paid</span>`}</td>
         </tr>`).join("");
     updateSummary();
     filterFines();
 }
 
 function updateSummary() {
-    const pending = fines.filter(fine => fine.status === "Pending").reduce((sum, fine) => sum + fine.amount, 0);
-    const paid = fines.filter(fine => fine.status === "Paid").reduce((sum, fine) => sum + fine.amount, 0);
+    const pending = fines.filter(fine => fine.status === "Pending").reduce((sum, fine) => sum + Number(fine.amount), 0);
+    const paid = fines.filter(fine => fine.status === "Paid").reduce((sum, fine) => sum + Number(fine.amount), 0);
     document.getElementById("totalFine").textContent = currency(pending);
     document.getElementById("totalPaid").textContent = currency(paid);
     document.getElementById("totalTransactions").textContent = fines.length;
@@ -38,9 +39,11 @@ function payAllFines() {
 function openPaymentModal(ids) {
     paymentFineIds = ids;
     const selected = fines.filter(fine => ids.includes(fine.id));
-    const amount = selected.reduce((sum, fine) => sum + fine.amount, 0);
+    const amount = selected.reduce((sum, fine) => sum + Number(fine.amount), 0);
     document.getElementById("paymentTitle").textContent = ids.length === 1 ? "Pay library fine" : "Pay all library fines";
-    document.getElementById("paymentDescription").textContent = ids.length === 1 ? `Payment for ${LibraryCatalog.getById(selected[0].bookId)?.title || "library fine"}` : `${ids.length} outstanding fine${ids.length > 1 ? "s" : ""} selected`;
+    document.getElementById("paymentDescription").textContent = ids.length === 1
+        ? `Payment for ${LibraryCatalog.getById(selected[0].bookId)?.title || "library fine"}`
+        : `${ids.length} outstanding fine${ids.length > 1 ? "s" : ""} selected`;
     document.getElementById("paymentAmount").textContent = currency(amount);
     document.getElementById("paymentModal").classList.add("open");
     document.getElementById("paymentModal").setAttribute("aria-hidden", "false");
@@ -52,13 +55,18 @@ function closePaymentModal() {
     paymentFineIds = [];
 }
 
-function confirmPayment() {
-    const method = document.getElementById("paymentMethod").value;
-    const paidDate = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-    fines = fines.map(fine => paymentFineIds.includes(fine.id) ? { ...fine, status: "Paid", paymentMethod: method, paidDate } : fine);
-    LibraryStore.saveFines(fines);
+async function confirmPayment() {
+    const confirmBtn = document.querySelector('#paymentModal .action-btn, #paymentModal button[onclick="confirmPayment()"]');
+    if (confirmBtn) confirmBtn.disabled = true;
+
+    // The demo "payment method" field is cosmetic — the backend just marks the fine Paid.
+    for (const id of paymentFineIds) {
+        await LibraryStore.payFine(id);
+    }
+
+    if (confirmBtn) confirmBtn.disabled = false;
     closePaymentModal();
-    loadFines();
+    await loadFines();
     alert("Payment successful. Your fine status has been updated.");
 }
 

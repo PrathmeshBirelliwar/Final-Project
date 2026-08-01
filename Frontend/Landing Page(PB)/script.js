@@ -97,32 +97,26 @@ window.addEventListener("scroll", () => {
 
 const loginButtons = document.querySelectorAll(".login-card button");
 
+// ===============================
+// Login Buttons
+// ===============================
+
+const loginButtons = document.querySelectorAll(".login-card button");
+
 loginButtons.forEach((button, index) => {
 
     button.addEventListener("click", () => {
 
         if (index === 0) {
-
-            alert("Admin Login Page");
-
-            // window.location.href = "admin-login.html";
-
+            window.location.href = "../Admin Dashboard(Siddhesh,Soham)/Final Project(Siddhesh%20Soham)/login.html";
         }
 
         else if (index === 1) {
-
-            alert("Librarian Login Page");
-
-            // window.location.href = "librarian-login.html";
-
+            window.location.href = "../librarian Dashboard(sid)/librarian/login.html";
         }
 
         else {
-
-            alert("Member Login Page");
-
-            // window.location.href = "member-login.html";
-
+            window.location.href = "../Member Dashboard(member)/member/login.html";
         }
 
     });

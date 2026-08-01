@@ -246,109 +246,7 @@
 
             <tbody>
 
-                <tr>
-
-                    <td>IS001</td>
-
-                    <td>Rahul Sharma</td>
-
-                    <td>Python Programming</td>
-
-                    <td>21 Jul 2026</td>
-
-                    <td>28 Jul 2026</td>
-
-                    <td>
-
-                        <span class="status issued">
-
-                            Issued
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <button class="view-btn">
-
-                            <i class="fa-solid fa-eye"></i>
-
-                        </button>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <td>IS002</td>
-
-                    <td>Sneha Patil</td>
-
-                    <td>Java Fundamentals</td>
-
-                    <td>20 Jul 2026</td>
-
-                    <td>27 Jul 2026</td>
-
-                    <td>
-
-                        <span class="status returned">
-
-                            Returned
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <button class="view-btn">
-
-                            <i class="fa-solid fa-eye"></i>
-
-                        </button>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <td>IS003</td>
-
-                    <td>Amit Joshi</td>
-
-                    <td>Database Systems</td>
-
-                    <td>18 Jul 2026</td>
-
-                    <td>25 Jul 2026</td>
-
-                    <td>
-
-                        <span class="status overdue">
-
-                            Overdue
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <button class="view-btn">
-
-                            <i class="fa-solid fa-eye"></i>
-
-                        </button>
-
-                    </td>
-
-                </tr>
-
-            </tbody>
+                </tbody>
 
         </table>
 
@@ -428,19 +326,22 @@
 
                     <label>Issue Date</label>
 
-                    <input
+                   <input
                         type="date"
-                        id="issueDate">
+                        id="issueDate"
+                        readonly
+                    >
 
                 </div>
 
                 <div class="form-group">
 
-                    <label>Return Date</label>
+                    <label>Expected Return Date</label>
 
                     <input
-                        type="date"
-                        id="returnDate">
+                        type="text"
+                        id="expectedReturnDate"
+                        readonly>
 
                 </div>
 
@@ -490,11 +391,11 @@
 
 <!-- Shared Database -->
 
-<script src="data/library-data.js"></script>
+<script src="js/api-client.js"></script>
 
 <!-- JavaScript -->
 
-<script src="js\issue-book.js"></script>
+<script src="js/issue-book.js"></script>
 
 </body>
 

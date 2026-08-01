@@ -23,6 +23,7 @@
 }
 </style>
 
+<script src="js/db.js"></script>
 <script src="js/auth.js"></script>
 </head>
 <body>
@@ -119,98 +120,83 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const API = "http://localhost:5000/api/stats/admin";
-
-function getToken() {
-    return sessionStorage.getItem("token");
-}
 
 async function renderReports() {
+    if (!window.DB) return;
+    await window.DB.ready();
 
-    try {
+    const stats = window.DB.getStats();
 
-        const response = await fetch(API, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        });
+    document.getElementById("reportTotalBooks").innerText = stats.totalBooks;
+    document.getElementById("reportIssuedBooks").innerText = stats.issuedBooks;
+    document.getElementById("reportReturnedBooks").innerText = stats.returnedBooks;
+    document.getElementById("reportOverdueBooks").innerText = stats.pendingReturns;
 
-        const data = await response.json();
+    const monthlyData = await window.DB.getMonthlyReport();
 
-        if (!data.success) {
-            alert(data.message);
-            return;
-        }
+    const tbody = document.getElementById("reportTableBody");
+    tbody.innerHTML = "";
 
-        const stats = data.stats;
-
-        document.getElementById("reportTotalBooks").innerText = stats.totalBooks;
-        document.getElementById("reportIssuedBooks").innerText = stats.issuedBooks;
-        document.getElementById("reportReturnedBooks").innerText = stats.returnedBooks;
-        document.getElementById("reportOverdueBooks").innerText = stats.pendingReturns;
-
-        document.getElementById("reportTableBody").innerHTML = `
-            <tr>
-                <td>Current Month</td>
-                <td>${stats.totalBooks}</td>
-                <td>${stats.issuedBooks}</td>
-                <td>${stats.returnedBooks}</td>
-                <td>${stats.totalMembers}</td>
-                <td>₹${stats.totalCollectedFines}</td>
-            </tr>
-        `;
-
-    } catch (err) {
-
-        console.error(err);
-        alert("Unable to load reports.");
-
-    }
-
-}
-
-async function downloadReport() {
-
-    const response = await fetch(API, {
-        headers: {
-            Authorization: `Bearer ${getToken()}`
-        }
-    });
-
-    const data = await response.json();
-
-    if (!data.success) {
-        alert("Unable to generate report.");
+    if (!monthlyData.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No monthly activity recorded yet.</td></tr>`;
         return;
     }
 
-    const stats = data.stats;
+    monthlyData.forEach(m => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${m.month}</td>
+            <td>${m.added}</td>
+            <td>${m.issued}</td>
+            <td>${m.returned}</td>
+            <td>${m.members}</td>
+            <td>₹${m.fine.toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
-    const report = `SMART LIBRARY REPORT
+async function downloadReport(){
 
-Generated On: ${new Date().toLocaleString()}
+    const stats = window.DB.getStats();
+    const monthlyData = await window.DB.getMonthlyReport();
+    const now = new Date().toLocaleString();
 
----------------------------------------
+    const monthlyText = monthlyData.map(m => `[${m.month}]
+- Books Added   : ${m.added}
+- Books Issued  : ${m.issued}
+- Books Returned: ${m.returned}
+- New Members   : ${m.members}
+- Fine Collected: \u20b9${m.fine.toLocaleString()}
+`).join("\n");
 
-Total Books      : ${stats.totalBooks}
-Issued Books     : ${stats.issuedBooks}
-Returned Books   : ${stats.returnedBooks}
-Overdue Books    : ${stats.pendingReturns}
-Members          : ${stats.totalMembers}
-Librarians       : ${stats.totalLibrarians}
-Fine Collected   : ₹${stats.totalCollectedFines}
-Pending Fines    : ₹${stats.pendingFines}
+    let report=`SMART LIBRARY MANAGEMENT SYSTEM - REALTIME REPORT
+Generated On: ${now}
+=====================================================
 
----------------------------------------
+SYSTEM SUMMARY:
+- Total Books Registered : ${stats.totalBooks}
+- Total Members         : ${stats.totalMembers}
+- Total Librarians      : ${stats.totalLibrarians}
+- Currently Issued Books: ${stats.issuedBooks}
+- Returned Books        : ${stats.returnedBooks}
+- Overdue Books         : ${stats.pendingReturns}
+- Total Fine Collected  : ₹${stats.totalCollectedFines.toLocaleString()}
+- Pending Fines         : ₹${stats.pendingFines.toLocaleString()}
+
+-----------------------------------------------------
+MONTHLY PERFORMANCE SUMMARY (last 6 months):
+-----------------------------------------------------
+
+${monthlyText || "No monthly activity recorded yet.\n"}
+=====================================================
+Report generated dynamically by Smart Library System
 `;
 
-    const blob = new Blob([report], {
-        type: "text/plain"
-    });
-
-    const link = document.createElement("a");
+    let blob = new Blob([report], { type: "text/plain" });
+    let link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "Library_Report.txt";
+    link.download = `Library_Report_${new Date().toISOString().slice(0,10)}.txt`;
     link.click();
     URL.revokeObjectURL(link.href);
 

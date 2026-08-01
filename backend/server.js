@@ -13,6 +13,7 @@ const reservationsRouter = require("./routes/reservations");
 const notificationsRouter = require("./routes/notifications");
 const backupsRouter = require("./routes/backups");
 const statsRouter = require("./routes/stats");
+const settingsRouter = require("./routes/settings");
 
 const app = express();
 
@@ -21,9 +22,6 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 app.get("/api/health", (req, res) => res.json({ success: true, message: "Library Hub API is running." }));
-app.get("/", (req, res) => {
-    res.send("Backend Working Successfully 🚀");
-});
 
 app.use("/api/auth", authRouter);
 app.use("/api/books", booksRouter);
@@ -35,6 +33,7 @@ app.use("/api/reservations", reservationsRouter);
 app.use("/api/notifications", notificationsRouter);
 app.use("/api/backups", backupsRouter);
 app.use("/api/stats", statsRouter);
+app.use("/api/settings", settingsRouter);
 
 // 404 handler
 app.use((req, res) => res.status(404).json({ success: false, message: "Endpoint not found." }));

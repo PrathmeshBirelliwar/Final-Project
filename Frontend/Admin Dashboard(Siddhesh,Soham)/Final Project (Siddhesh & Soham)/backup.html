@@ -11,7 +11,7 @@
 
 <link rel="stylesheet" href="css/style.css">
 
-
+<script src="js/db.js"></script>
 <script src="js/auth.js"></script>
 </head>
 
@@ -44,12 +44,12 @@
 
 <tr>
 <th>Database Name</th>
-<td>smart_library</td>
+<td id="dbName">Loading...</td>
 </tr>
 
 <tr>
 <th>Total Tables</th>
-<td>6</td>
+<td id="dbTableCount">Loading...</td>
 </tr>
 
 <tr>
@@ -59,7 +59,7 @@
 
 <tr>
 <th>Status</th>
-<td><span class="badge bg-success">Ready</span></td>
+<td><span class="badge bg-success" id="dbStatusBadge">Connected</span></td>
 </tr>
 
 </table>
@@ -111,134 +111,126 @@ Restore Backup
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const API = "http://localhost:5000/api/backups";
 
-function getToken() {
-    return sessionStorage.getItem("token");
+async function renderDatabaseInfo() {
+    const statusBadge = document.getElementById("dbStatusBadge");
+    try {
+        const health = await fetch((window.LIBRARY_API_BASE || "http://localhost:5000/api") + "/health").then(r => r.json());
+        if (statusBadge) {
+            statusBadge.textContent = health.success ? "Connected" : "Unreachable";
+            statusBadge.className = "badge " + (health.success ? "bg-success" : "bg-danger");
+        }
+    } catch (_) {
+        if (statusBadge) { statusBadge.textContent = "Unreachable"; statusBadge.className = "badge bg-danger"; }
+    }
+
+    await window.DB.ready();
+    const stats = window.DB.getStats();
+    document.getElementById("dbName").textContent = stats.databaseName || "library_hub";
+    document.getElementById("dbTableCount").textContent = stats.tableCount ?? "-";
 }
-
 
 async function renderBackupHistory() {
+    await window.DB.ready();
+    const history = window.DB.getBackups();
+    const historyTable = document.getElementById("historyTable");
 
-    try {
+    // Clear container first to prevent duplicates (BUG_07 fix)
+    historyTable.innerHTML = "";
 
-        const response = await fetch(API, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        });
+    if (history.length === 0) {
+        historyTable.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No backup history available.</td></tr>`;
+        document.getElementById("lastBackup").innerText = "None";
+        return;
+    }
 
-        const data = await response.json();
+    document.getElementById("lastBackup").innerText = new Date(history[0].date).toLocaleString();
 
-        if (!data.success) {
-            alert(data.message);
+    history.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${new Date(item.date).toLocaleString()}</td>
+            <td>${item.status === "Completed" ? `<a href="#" onclick="downloadBackup('${item.id}');return false;">${item.fileName}</a>` : item.fileName}</td>
+            <td>${item.size || '0 KB'}</td>
+            <td><span class="badge ${item.status === 'Completed' ? 'bg-success' : 'bg-danger'}">${item.status || 'Completed'}</span></td>
+        `;
+        historyTable.appendChild(tr);
+    });
+}
+
+function downloadBackup(id) {
+    // Downloading requires the JWT, so we fetch as a blob rather than a plain <a href>.
+    const token = JSON.parse(sessionStorage.getItem("smart_library_session") || "null")?.token;
+    fetch(window.DB.downloadBackupUrl(id), { headers: token ? { Authorization: "Bearer " + token } : {} })
+        .then(res => res.ok ? res.blob() : Promise.reject(res))
+        .then(blob => {
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "library_backup.sql";
+            link.click();
+        })
+        .catch(() => alert("Could not download this backup file."));
+}
+
+async function backupDatabase(){
+    const btn = event ? event.target.closest("button") : null;
+    if (btn) { btn.disabled = true; btn.innerText = "Backing up..."; }
+
+    const res = await window.DB.createBackup();
+
+    if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-download me-1"></i> Backup Now`; }
+
+    await renderBackupHistory();
+    alert(res.message);
+}
+
+function restoreDatabase(){
+    document.getElementById("restoreFile").click();
+}
+
+async function restoreSelectedFile(e){
+
+    const file = e.target.files[0];
+    if(!file) return;
+
+    // Validate Extension (BUG_08)
+    if (!file.name.toLowerCase().endsWith(".sql")) {
+        alert("Invalid file format! Please upload a valid SQL file (.sql).");
+        e.target.value = "";
+        return;
+    }
+
+    // Validate Size
+    if (file.size === 0) {
+        alert("The selected file is empty. Please upload a valid system backup.");
+        e.target.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function(event) {
+        const content = event.target.result;
+
+        // Validation against invalid SQL files (BUG_08)
+        const check = await window.DB.restoreBackup(content, file.name);
+
+        // Confirmation before overwrite
+        const confirmRestore = confirm(`WARNING: Restoring a backup will overwrite current system data.\n\nBackup File: ${file.name}\n\nDo you want to continue?`);
+
+        if (!confirmRestore) {
+            e.target.value = "";
             return;
         }
 
-        const historyTable = document.getElementById("historyTable");
-        historyTable.innerHTML = "";
+        alert(check.message);
+        e.target.value = "";
+    };
 
-        if (data.backups.length === 0) {
-
-            historyTable.innerHTML =
-                `<tr><td colspan="4" class="text-center">No backup history available.</td></tr>`;
-
-            document.getElementById("lastBackup").innerText = "None";
-
-            return;
-
-        }
-
-        document.getElementById("lastBackup").innerText =
-            new Date(data.backups[0].date).toLocaleString();
-
-        data.backups.forEach(item => {
-
-            historyTable.innerHTML += `
-
-            <tr>
-
-                <td>${new Date(item.date).toLocaleString()}</td>
-
-                <td>
-
-                    <a href="${API}/${item.id}/download"
-                       target="_blank">
-
-                        ${item.fileName}
-
-                    </a>
-
-                </td>
-
-                <td>${item.size}</td>
-
-                <td>
-
-                    <span class="badge bg-success">
-
-                        ${item.status}
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-            `;
-
-        });
-
-    } catch(err){
-
-        console.error(err);
-
-        alert("Unable to load backups.");
-
-    }
-
+    reader.readAsText(file);
 }
-
-async function backupDatabase() {
-
-    try {
-
-        const response = await fetch(API, {
-
-            method: "POST",
-
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-
-        });
-
-        const data = await response.json();
-
-        alert(data.message);
-
-        if (data.success) {
-
-            renderBackupHistory();
-
-        }
-
-    } catch(err){
-
-        console.error(err);
-
-        alert("Unable to create backup.");
-
-    }
-
-}
-
-function restoreDatabase() {
-    alert("Restore feature is not available in the current backend.");
-}
-
 
 document.addEventListener("DOMContentLoaded", renderBackupHistory);
+document.addEventListener("DOMContentLoaded", renderDatabaseInfo);
 
 </script>
 

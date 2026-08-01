@@ -134,10 +134,8 @@ Business rules already enforced server-side:
 
 ---
 
-## 7. What's next
+## 7. Frontend integration
 
-This backend is ready to be wired up to the three existing frontends
-(Admin/Librarian/Member dashboards), which currently store everything in
-`localStorage` and don't share data with each other or check real
-credentials. That integration (replacing each dashboard's local mock
-"database" with calls to this API) is the next step.
+All three frontends (Admin, Librarian, Member dashboards, in `../frontend/`)
+have been rewired to call this API instead of `localStorage`. See the
+top-level `SETUP.md` for how to run the whole thing together.

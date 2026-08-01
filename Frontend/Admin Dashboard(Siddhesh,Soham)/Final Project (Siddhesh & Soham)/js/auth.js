@@ -115,26 +115,11 @@
     }
 
     // Run auth check immediately
-    function checkAuth() {
-    const path = window.location.pathname.toLowerCase();
+    checkAuth();
+    initLogoutConfirmation();
 
-    const publicPages = [
-        "login.html",
-        "logout.html",
-        "index.html"
-    ];
-
-    if (publicPages.some(page => path.endsWith(page)) || path.endsWith("/")) {
-        return;
-    }
-
-    const token = sessionStorage.getItem("token");
-    const user = sessionStorage.getItem("user");
-
-    if (!token || !user) {
-        alert("Session expired or unauthorized access. Redirecting to login...");
-        window.location.href = "login.html";
-        return;
-    }
-}
+    window.Auth = {
+        checkAuth,
+        showLogoutModal
+    };
 })(window);

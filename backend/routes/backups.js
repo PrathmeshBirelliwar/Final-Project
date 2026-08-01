@@ -77,4 +77,22 @@ router.get("/:id/download", requireAuth, requireRole("Admin"), async (req, res) 
     }
 });
 
+// POST /api/backups/restore-log — Admin only. Records that a restore was attempted.
+// Note: automatically re-importing arbitrary uploaded .sql files is intentionally not
+// wired up (it would let an admin-panel file upload run arbitrary SQL against the live
+// database), so this endpoint only logs the action for audit purposes.
+router.post("/restore-log", requireAuth, requireRole("Admin"), async (req, res) => {
+    try {
+        const { fileName } = req.body;
+        await logAudit("Admin", req.user.id, "Database restore attempted (metadata only)", fileName || "unknown file");
+        res.json({
+            success: true,
+            message: "Restore recorded. Automatic re-import of uploaded backup files is disabled for safety — ask your database administrator to run the .sql file manually if you need to restore data.",
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Failed to log restore attempt." });
+    }
+});
+
 module.exports = router;

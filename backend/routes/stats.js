@@ -25,6 +25,9 @@ router.get("/admin", requireAuth, requireRole("Admin"), async (req, res) => {
             "SELECT COUNT(DISTINCT member_id) AS membersFinedCount FROM issues WHERE fine_amount > 0"
         );
         const [[lastBackup]] = await pool.query("SELECT created_at FROM backups ORDER BY created_at DESC LIMIT 1");
+        const [[{ tableCount }]] = await pool.query(
+            "SELECT COUNT(*) AS tableCount FROM information_schema.tables WHERE table_schema = DATABASE()"
+        );
 
         res.json({
             success: true,
@@ -32,6 +35,7 @@ router.get("/admin", requireAuth, requireRole("Admin"), async (req, res) => {
                 totalBooks, totalMembers, totalLibrarians, issuedBooks, returnedBooks, pendingReturns,
                 totalCollectedFines: Number(totalCollectedFines), pendingFines: Number(pendingFines),
                 membersFinedCount, lastBackupDate: lastBackup ? lastBackup.created_at : "None",
+                databaseName: process.env.DB_NAME || "library_hub", tableCount,
             },
         });
     } catch (err) {
@@ -88,6 +92,56 @@ router.get("/member", requireAuth, requireRole("Member"), async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: "Failed to load your dashboard." });
+    }
+});
+
+// GET /api/stats/monthly — real month-by-month aggregates for the last 6 months (Admin)
+router.get("/monthly", requireAuth, requireRole("Admin"), async (req, res) => {
+    try {
+        const [added] = await pool.query(`
+            SELECT DATE_FORMAT(created_at, '%Y-%m') AS ym, COUNT(*) AS count
+            FROM books WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            GROUP BY ym`);
+        const [issued] = await pool.query(`
+            SELECT DATE_FORMAT(issue_date, '%Y-%m') AS ym, COUNT(*) AS count
+            FROM issues WHERE issue_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            GROUP BY ym`);
+        const [returned] = await pool.query(`
+            SELECT DATE_FORMAT(return_date, '%Y-%m') AS ym, COUNT(*) AS count
+            FROM issues WHERE return_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            GROUP BY ym`);
+        const [members] = await pool.query(`
+            SELECT DATE_FORMAT(created_at, '%Y-%m') AS ym, COUNT(*) AS count
+            FROM members WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            GROUP BY ym`);
+        const [fines] = await pool.query(`
+            SELECT DATE_FORMAT(return_date, '%Y-%m') AS ym, COALESCE(SUM(fine_amount),0) AS total
+            FROM issues WHERE fine_status='Paid' AND return_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            GROUP BY ym`);
+
+        const toMap = rows => Object.fromEntries(rows.map(r => [r.ym, r.count ?? r.total]));
+        const addedMap = toMap(added), issuedMap = toMap(issued), returnedMap = toMap(returned),
+            membersMap = toMap(members), finesMap = toMap(fines);
+
+        const months = [];
+        const now = new Date();
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            months.push({
+                month: d.toLocaleString("en-US", { month: "long", year: "numeric" }),
+                added: addedMap[ym] || 0,
+                issued: issuedMap[ym] || 0,
+                returned: returnedMap[ym] || 0,
+                members: membersMap[ym] || 0,
+                fine: Number(finesMap[ym] || 0),
+            });
+        }
+
+        res.json({ success: true, months });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Failed to load monthly statistics." });
     }
 });
 

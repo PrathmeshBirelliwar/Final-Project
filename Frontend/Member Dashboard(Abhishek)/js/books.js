@@ -3,17 +3,18 @@
     let searchQuery = "";
 
     function getBooks() {
-        return LibraryCatalog.all().map(book => ({
-            ...book,
-            availableCopies: LibraryStore.getAvailableCopies(book.id)
-        }));
+        return LibraryCatalog.all();
+    }
+
+    function slugify(text) {
+        return String(text || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     }
 
     function matches(book) {
         const query = searchQuery.trim().toLowerCase();
         const matchesQuery = !query || [book.title, book.author, book.isbn, book.category, book.categoryLabel]
-            .some(value => value.toLowerCase().includes(query));
-        return matchesQuery && (activeCategory === "all" || book.category === activeCategory);
+            .filter(Boolean).some(value => value.toLowerCase().includes(query));
+        return matchesQuery && (activeCategory === "all" || slugify(book.category) === activeCategory);
     }
 
     function renderBooks() {
@@ -36,9 +37,17 @@
         window.location.href = `book-details.html?book=${encodeURIComponent(id)}`;
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
+        await LibraryCatalog.ready();
+        if (window.LibraryStore) await LibraryStore.ready();
+
         const searchInput = document.getElementById("bookSearch");
         const grid = document.getElementById("booksGrid");
+
+        // Support a search prefilled from the header search box on the librarian-style dashboard link
+        const prefill = new URLSearchParams(window.location.search).get("q");
+        if (prefill && searchInput) { searchInput.value = prefill; searchQuery = prefill; }
+
         if (searchInput) searchInput.addEventListener("input", event => {
             searchQuery = event.target.value;
             renderBooks();

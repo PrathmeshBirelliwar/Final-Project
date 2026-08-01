@@ -1,12 +1,11 @@
 const express = require("express");
 const pool = require("../config/db");
 const { requireAuth, requireRole } = require("../middleware/auth");
-const { LOAN_DAYS, addDays, toDateOnly, calcFine } = require("../utils/helpers");
+const { LOAN_DAYS, addDays, toDateOnly, calcFine, getSettings } = require("../utils/helpers");
 const { logAudit } = require("./auth");
 
 const router = express.Router();
-const MAX_BOOKS_PER_MEMBER = 3;
-const MAX_RENEWALS = 2;
+const MAX_RENEWALS = 2; // not exposed in Settings — a fixed business rule
 
 function mapIssue(row) {
     return {
@@ -91,6 +90,8 @@ router.post("/", requireAuth, async (req, res) => {
 
         await conn.beginTransaction();
 
+        const settings = await getSettings(pool);
+
         const [books] = await conn.query("SELECT * FROM books WHERE id = ? FOR UPDATE", [bookId]);
         if (!books.length) { await conn.rollback(); return res.status(404).json({ success: false, message: "Book not found." }); }
         const book = books[0];
@@ -115,13 +116,13 @@ router.post("/", requireAuth, async (req, res) => {
             "SELECT COUNT(*) AS c FROM issues WHERE member_id = ? AND status = 'Active'",
             [targetMemberId]
         );
-        if (activeCount[0].c >= MAX_BOOKS_PER_MEMBER) {
+        if (activeCount[0].c >= settings.maxBooksPerMember) {
             await conn.rollback();
-            return res.status(409).json({ success: false, message: `Members can borrow a maximum of ${MAX_BOOKS_PER_MEMBER} books at a time.` });
+            return res.status(409).json({ success: false, message: `Members can borrow a maximum of ${settings.maxBooksPerMember} books at a time.` });
         }
 
         const issueDate = new Date();
-        const dueDate = addDays(issueDate, LOAN_DAYS);
+        const dueDate = addDays(issueDate, settings.loanDays);
         const librarianId = req.user.role === "Librarian" ? req.user.id : null;
 
         const [result] = await conn.query(
@@ -162,7 +163,8 @@ router.post("/:id/return", requireAuth, async (req, res) => {
         }
 
         const returnDate = new Date();
-        const { overdueDays, fineAmount } = calcFine(issue.due_date, returnDate);
+        const settings = await getSettings(pool);
+        const { overdueDays, fineAmount } = calcFine(issue.due_date, returnDate, settings.finePerDay);
         const fineStatus = fineAmount > 0 ? "Pending" : "None";
 
         await conn.query(
@@ -205,7 +207,8 @@ router.post("/:id/renew", requireAuth, async (req, res) => {
         }
 
         const base = new Date(`${toDateOnly(issue.due_date)}T00:00:00`) < new Date() ? new Date() : new Date(issue.due_date);
-        const newDue = addDays(base, LOAN_DAYS);
+        const settings = await getSettings(pool);
+        const newDue = addDays(base, settings.loanDays);
 
         await pool.query("UPDATE issues SET due_date = ?, renewals = renewals + 1 WHERE id = ?", [toDateOnly(newDue), req.params.id]);
         await logAudit(req.user.role, req.user.id, "Book renewed", `issue #${req.params.id}`);

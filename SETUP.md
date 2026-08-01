@@ -132,6 +132,41 @@ database through the backend in `backend/`.
 - Backend `librarians.js`: an added `/me` route was declared after
   `/:id`, which would have made Express treat `"me"` as an `:id` — moved it
   before.
+- Admin `fine_collection.html`'s three summary cards (Total Fine Collected /
+  Pending Fine / Members Fined) had **no `id` attributes**, so
+  `document.getElementById(...)` returned `null` and threw on every render —
+  which silently swallowed the "payment successful" alert after paying a
+  fine. Added the missing IDs.
+- Admin `reports.html` had **hardcoded fake monthly figures** (a literal
+  "January: 40 books added / ₹1,000 fine", "February: 30 books added /
+  ₹850 fine", etc.) mixed into both the on-screen table and the downloadable
+  report, alongside the one real "current month" row. Replaced with a real
+  `GET /api/stats/monthly` endpoint that aggregates actual books/issues/
+  returns/members/fines by month from the database.
+- Admin `backup.html`'s "Database Information" panel showed a hardcoded,
+  wrong database name (`smart_library` — the real one is `library_hub`),
+  a hardcoded table count, and a permanently-green "Ready" badge. Now pulled
+  live from the API (`information_schema` table count + a real health check).
+- Member dashboard had a second, completely unwired copy of the dashboard
+  at the project root (`index.html`) showing a hardcoded name ("Akshay")
+  and fake numbers — replaced with a simple redirect to the real, live
+  `pages/dashboard.html`.
+- Member `dashboard.html`'s "Recommended For You" section was 3 entirely
+  fake books (not in the catalog) with dead "View Details" buttons that did
+  nothing. Now shows real catalog books the member hasn't borrowed yet, with
+  working links.
+- The Digital Library page was fully static sample content with no
+  connection to real books. Added `is_digital` / `resource_type` columns to
+  the backend, seeded some real catalog books as digital resources, and
+  wired the page to the live API.
+- Librarian `books.html`, `issue-book.html`, and `return-book.html` each had
+  3 hardcoded fake demo rows (`BK001 "Python Programming"`,
+  `IS001 "Rahul Sharma"`, etc.) sitting directly in the HTML `<tbody>`,
+  overwritten by JS on load but still shipped as dead markup. Removed.
+- Librarian dashboard's profile modal showed a hardcoded phone number
+  (`+91 9876543210`) regardless of who was logged in. Added a real
+  `GET/PUT /api/librarians/me` endpoint so it now shows and saves the
+  librarian's actual phone/address.
 
 ### Known limitations (by design, given scope)
 - **Password reset by email** isn't available (no email service is
@@ -144,9 +179,9 @@ database through the backend in `backend/`.
   restore should be a manual `mysql < backup.sql` by an administrator.
 - **Book IDs can't be renamed** after creation through the UI (title,
   author, etc. can still be edited freely).
-- The **Digital Library** page (e-books/journals) in the Member dashboard is
-  still static sample content — it was never tied to real book records in
-  the original design.
+- The **Digital Library** page now lists real catalog books flagged as
+  digital resources, but there's no actual e-reader — "Open Resource" links
+  to that book's real details page rather than an in-browser reader.
 - Librarian **Settings** (loan period / fine rate fields) are a local
   display preference; the live system enforces a 15-day loan period and
   ₹5/day fine for everyone, set in `backend/utils/helpers.js`.

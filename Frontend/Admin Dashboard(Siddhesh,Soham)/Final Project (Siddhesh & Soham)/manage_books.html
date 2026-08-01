@@ -10,12 +10,14 @@
 
 <link rel="stylesheet" href="css/style.css">
 
+<script src="js/api-client.js"></script>
 <script src="js/auth.js"></script>
 </head>
 <header>
     <i class="bi bi-book"></i>
     Manage Books
 </header>
+        
 <body>
 
 <div class="sidebar">
@@ -75,20 +77,19 @@
 
     <button type="button"
             class="add"
-            id="btnSaveBook"
-            onclick="addBook()">
+            id="btnSaveBook">
         Add Book
     </button>
 
     <button type="button"
             class="edit"
-            onclick="updateBook()">
+            id="btnUpdateBook">
         Update
     </button>
 
     <button type="button"
             class="delete"
-            onclick="deleteBook()">
+            id="btnDeleteBook">
         Delete
     </button>
 
@@ -146,246 +147,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/books.js"></script>
 
-<script>
-const API = "http://localhost:5000/api/books";
-
-function getToken() {
-    return sessionStorage.getItem("token");
-}
-
-let selectedRow = null;
-let selectedBookId = null;
-
-async function renderBooks() {
-    try {
-        const response = await fetch(API, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        });
-
-        const data = await response.json();
-
-        if (!data.success) {
-            alert(data.message);
-            return;
-        }
-
-        const tableBody = document.getElementById("bookTable");
-        tableBody.innerHTML = "";
-
-        data.books.forEach(b => {
-            const tr = document.createElement("tr");
-
-            tr.onclick = () => selectRow(tr, b.id);
-
-            tr.innerHTML = `
-                <td>${b.id}</td>
-                <td>${b.title}</td>
-                <td>${b.author}</td>
-                <td>${b.category}</td>
-                <td>${b.publisher ?? ""}</td>
-                <td>${b.totalCopies}</td>
-            `;
-
-            tableBody.appendChild(tr);
-        });
-
-    } catch (err) {
-        console.error(err);
-        alert("Unable to load books.");
-    }
-}
-
-function selectRow(row, id){
-
-if(selectedRow)
-selectedRow.classList.remove("selected");
-
-selectedRow=row;
-selectedBookId=id;
-row.classList.add("selected");
-
-document.getElementById("bookId").value=row.cells[0].innerText;
-document.getElementById("bookName").value=row.cells[1].innerText;
-document.getElementById("author").value=row.cells[2].innerText;
-document.getElementById("category").value=row.cells[3].innerText;
-document.getElementById("publisher").value=row.cells[4].innerText;
-document.getElementById("quantity").value=row.cells[5].innerText;
-
-}
-
-async function addBook() {
-
-    const book = {
-        id: document.getElementById("bookId").value,
-        name: document.getElementById("bookName").value,
-        author: document.getElementById("author").value,
-        category: document.getElementById("category").value,
-        publisher: document.getElementById("publisher").value,
-        quantity: Number(document.getElementById("quantity").value)
-    };
-
-    try {
-
-        const response = await fetch(API, {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${getToken()}`
-            },
-
-            body: JSON.stringify(book)
-
-        });
-
-        const data = await response.json();
-
-        alert(data.message);
-
-        if (data.success) {
-
-            clearForm();
-
-            renderBooks();
-
-        }
-
-    } catch (err) {
-
-        console.error(err);
-
-        alert("Unable to add book.");
-
-    }
-
-}
-
-async function updateBook() {
-
-    if (selectedRow == null || !selectedBookId) {
-        alert("Please select a book row to update");
-        return;
-    }
-
-    const book = {
-        id: document.getElementById("bookId").value,
-        name: document.getElementById("bookName").value,
-        author: document.getElementById("author").value,
-        category: document.getElementById("category").value,
-        publisher: document.getElementById("publisher").value,
-        quantity: Number(document.getElementById("quantity").value)
-    };
-
-    try {
-
-        const response = await fetch(API + "/" + selectedBookId, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${getToken()}`
-            },
-            body: JSON.stringify(book)
-        });
-
-        const data = await response.json();
-
-        alert(data.message);
-
-        if (data.success) {
-            clearForm();
-            renderBooks();
-        }
-
-    } catch (err) {
-        console.error(err);
-        alert("Unable to update book.");
-    }
-
-}
-
-async function deleteBook() {
-
-    if (selectedRow == null || !selectedBookId) {
-        alert("Please select a book row to delete");
-        return;
-    }
-
-    if (!confirm("Are you sure you want to delete this book?")) {
-        return;
-    }
-
-    try {
-
-        const response = await fetch(API + "/" + selectedBookId, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        });
-
-        const data = await response.json();
-
-        alert(data.message);
-
-        if (data.success) {
-            clearForm();
-            renderBooks();
-        }
-
-    } catch (err) {
-        console.error(err);
-        alert("Unable to delete book.");
-    }
-
-}
-
-function clearForm(){
-
-document.getElementById("bookId").value="";
-document.getElementById("bookName").value="";
-document.getElementById("author").value="";
-document.getElementById("category").value="";
-document.getElementById("publisher").value="";
-document.getElementById("quantity").value="";
-
-if(selectedRow) selectedRow.classList.remove("selected");
-selectedRow = null;
-selectedBookId = null;
-
-}
-
-function searchBook(){
-
-let input=document.getElementById("search").value.toUpperCase();
-let table=document.getElementById("bookTable");
-let tr=table.getElementsByTagName("tr");
-
-for(let i=0;i<tr.length;i++){
-
-let found=false;
-let td=tr[i].getElementsByTagName("td");
-
-for(let j=0;j<td.length;j++){
-
-if(td[j].innerText.toUpperCase().indexOf(input)>-1){
-found=true;
-}
-
-}
-
-tr[i].style.display=found?"":"none";
-
-}
-
-}
-
-document.addEventListener("DOMContentLoaded", renderBooks);
-
-</script>
 
 </body>
 </html>

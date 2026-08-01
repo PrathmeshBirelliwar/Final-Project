@@ -1,291 +1,171 @@
 // ==========================================
-// DATABASE
+// AUTH GUARD
 // ==========================================
+if (!window.LibAPI.isLoggedIn()) {
+    window.location.href = "login.html";
+}
 
-const students = DATABASE.students;
+// ==========================================
+// STATE
+// ==========================================
+let students = [];
+let editingStudentId = null;
 
 // ==========================================
 // ELEMENTS
 // ==========================================
-
 const addStudentButton = document.querySelector(".add-student-btn");
-
 const studentModal = document.getElementById("addStudentModal");
-
 const closeStudentButton = document.getElementById("closeStudentModal");
-
 const cancelStudentButton = document.querySelector(".cancel-btn");
-
 const studentForm = document.getElementById("studentForm");
-
 const searchStudent = document.getElementById("searchStudent");
 
-const tableBody = document.querySelector(".students-table tbody");
-
 // ==========================================
-// EDIT MODE
+// OPEN / CLOSE MODAL
 // ==========================================
-
-let editIndex = null;
-
-// ==========================================
-// OPEN MODAL
-// ==========================================
-
-addStudentButton.addEventListener("click", function(){
-
+addStudentButton.addEventListener("click", function () {
     studentForm.reset();
-
-    editIndex = null;
-
+    editingStudentId = null;
     studentModal.style.display = "flex";
-
 });
-
-// ==========================================
-// CLOSE MODAL
-// ==========================================
 
 closeStudentButton.addEventListener("click", closeModal);
-
 cancelStudentButton.addEventListener("click", closeModal);
-
-window.addEventListener("click", function(event){
-
-    if(event.target === studentModal){
-
-        closeModal();
-
-    }
-
+window.addEventListener("click", function (event) {
+    if (event.target === studentModal) closeModal();
 });
-
-function closeModal(){
-
+function closeModal() {
     studentModal.style.display = "none";
-
-}// ==========================================
-// LOAD STUDENTS
-// ==========================================
-
-function loadStudents(){
-
-    tableBody.innerHTML = "";
-
-    students.forEach(function(student, index){
-
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-
-            <td>${student.id}</td>
-
-            <td>${student.name}</td>
-
-            <td>${student.course}</td>
-
-            <td>${student.year}</td>
-
-            <td>${student.phone}</td>
-
-            <td>
-
-                <span class="status active">
-
-                    Active
-
-                </span>
-
-            </td>
-
-            <td>
-
-                <button
-                    class="edit-btn"
-                    data-index="${index}">
-
-                    <i class="fa-solid fa-pen"></i>
-
-                </button>
-
-                <button
-                    class="delete-btn"
-                    data-index="${index}">
-
-                    <i class="fa-solid fa-trash"></i>
-
-                </button>
-
-            </td>
-
-        `;
-
-        tableBody.appendChild(row);
-
-    });
-
 }
 
 // ==========================================
-// INITIAL LOAD
+// LOAD STUDENTS
 // ==========================================
+async function loadStudents() {
+    students = await window.LibAPI.getStudents();
+    renderStudents(searchStudent ? searchStudent.value : "");
+    const countEl = document.getElementById("totalStudentsCount");
+    if (countEl) countEl.textContent = students.length;
+}
 
-loadStudents();// ==========================================
-// SAVE STUDENT
+function renderStudents(query) {
+    const tableBody = document.querySelector(".students-table tbody");
+    const term = (query || "").trim().toLowerCase();
+    const visible = term
+        ? students.filter(s => `${s.id} ${s.name} ${s.course} ${s.phone} ${s.email}`.toLowerCase().includes(term))
+        : students;
+
+    tableBody.innerHTML = "";
+    visible.forEach(function (student) {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${student.id}</td>
+            <td>${student.name}</td>
+            <td>${student.course || "-"}</td>
+            <td>${student.year || "-"}</td>
+            <td>${student.phone || "-"}</td>
+            <td>
+                <span class="status active">Active</span>
+            </td>
+            <td>
+                <button class="edit-btn" data-id="${student.id}">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="delete-btn" data-id="${student.id}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
 // ==========================================
-
-studentForm.addEventListener("submit", function(event){
-
+// SAVE STUDENT (add or edit)
+// ==========================================
+studentForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const id = document.getElementById("studentId").value.trim();
-
     const name = document.getElementById("studentName").value.trim();
-
     const course = document.getElementById("studentCourse").value;
-
     const year = document.getElementById("studentYear").value;
-
     const phone = document.getElementById("studentPhone").value.trim();
+    const email = document.getElementById("studentEmail") ? document.getElementById("studentEmail").value.trim() : "";
 
-    if(
-        id === "" ||
-        name === "" ||
-        course === "" ||
-        year === "" ||
-        phone === ""
-    ){
-
+    if (id === "" || name === "" || course === "" || year === "" || phone === "" || email === "") {
         alert("Please fill all fields.");
-
         return;
-
     }
 
-    const student = {
+    const submitBtn = studentForm.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
 
-        id: id,
+    const payload = { id, name, course, year, phone, email };
+    const res = editingStudentId
+        ? await window.LibAPI.updateStudent(editingStudentId, payload)
+        : await window.LibAPI.addStudent(payload);
 
-        name: name,
+    if (submitBtn) submitBtn.disabled = false;
 
-        course: course,
-
-        year: year,
-
-        phone: phone
-
-    };
-
-    if(editIndex === null){
-
-        students.push(student);
-
+    if (!res.success) {
+        alert(res.message);
+        return;
     }
 
-    else{
-
-        students[editIndex] = student;
-
-        editIndex = null;
-
-    }
-
-    saveDatabase();
-
-    loadStudents();
-
+    editingStudentId = null;
+    await loadStudents();
     studentForm.reset();
-
     closeModal();
+});
 
-});// ==========================================
+// ==========================================
 // EDIT STUDENT
 // ==========================================
-
-document.addEventListener("click", function(event){
-
+document.addEventListener("click", function (event) {
     const editButton = event.target.closest(".edit-btn");
+    if (!editButton) return;
 
-    if(!editButton){
+    const student = students.find(s => s.id === editButton.dataset.id);
+    if (!student) return;
 
-        return;
-
-    }
-
-    editIndex = Number(editButton.dataset.index);
-
-    const student = students[editIndex];
-
+    editingStudentId = student.id;
     document.getElementById("studentId").value = student.id;
-
     document.getElementById("studentName").value = student.name;
-
-    document.getElementById("studentCourse").value = student.course;
-
-    document.getElementById("studentYear").value = student.year;
-
-    document.getElementById("studentPhone").value = student.phone;
+    document.getElementById("studentCourse").value = student.course || "";
+    document.getElementById("studentYear").value = student.year || "";
+    document.getElementById("studentPhone").value = student.phone || "";
+    if (document.getElementById("studentEmail")) document.getElementById("studentEmail").value = student.email || "";
 
     studentModal.style.display = "flex";
+});
 
-});// ==========================================
+// ==========================================
 // DELETE STUDENT
 // ==========================================
-
-document.addEventListener("click", function(event){
-
+document.addEventListener("click", async function (event) {
     const deleteButton = event.target.closest(".delete-btn");
+    if (!deleteButton) return;
 
-    if(!deleteButton){
+    if (!confirm("Are you sure you want to delete this student?")) return;
 
+    const res = await window.LibAPI.deleteStudent(deleteButton.dataset.id);
+    if (!res.success) {
+        alert(res.message);
         return;
-
     }
-
-    const index = Number(deleteButton.dataset.index);
-
-    const confirmDelete = confirm("Are you sure you want to delete this student?");
-
-    if(!confirmDelete){
-
-        return;
-
-    }
-
-    students.splice(index, 1);
-
-    saveDatabase();
-
-    loadStudents();
-
+    await loadStudents();
 });
 
 // ==========================================
 // LIVE SEARCH
 // ==========================================
-
-searchStudent.addEventListener("keyup", function(){
-
-    const value = searchStudent.value.toLowerCase();
-
-    const rows = document.querySelectorAll(".students-table tbody tr");
-
-    rows.forEach(function(row){
-
-        const text = row.textContent.toLowerCase();
-
-        if(text.includes(value)){
-
-            row.style.display = "";
-
-        }
-
-        else{
-
-            row.style.display = "none";
-
-        }
-
-    });
-
+searchStudent.addEventListener("keyup", function () {
+    renderStudents(this.value);
 });
+
+// ==========================================
+// INITIAL LOAD
+// ==========================================
+loadStudents();

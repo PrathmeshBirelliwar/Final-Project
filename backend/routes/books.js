@@ -27,15 +27,21 @@ function mapBook(row) {
         quantity: row.total_quantity,
         totalCopies: row.total_quantity,
         availableCopies: row.available_quantity,
+        isDigital: !!row.is_digital,
+        resourceType: row.resource_type,
     };
 }
 
 // GET /api/books  — public catalog (search + category filter)
 router.get("/", async (req, res) => {
     try {
-        const { search, category } = req.query;
+        const { search, category, digital } = req.query;
         let sql = "SELECT * FROM books WHERE 1=1";
         const params = [];
+        if (digital !== undefined) {
+            sql += " AND is_digital = ?";
+            params.push(digital === "true" || digital === "1" ? 1 : 0);
+        }
         if (category && category !== "all") {
             sql += " AND category = ?";
             params.push(category);

@@ -1,57 +1,124 @@
 // ==========================================
-// DATABASE
+// AUTH GUARD
 // ==========================================
-
-const BOOK_API = "http://localhost:5000/api/books";
-const MEMBER_API = "http://localhost:5000/api/members";
-const ISSUE_API = "http://localhost:5000/api/issues";
-
-function getToken() {
-    return sessionStorage.getItem("token");
+if (!window.LibAPI.isLoggedIn()) {
+    window.location.href = "login.html";
 }
 
+// ==========================================
+// STATE
+// ==========================================
 let books = [];
 let students = [];
-let issuedBooks = [];
+let issues = [];
 
 // ==========================================
 // ELEMENTS
 // ==========================================
-
 const issueButton = document.querySelector(".issue-book-btn");
-
 const issueModal = document.getElementById("issueBookModal");
-
 const closeIssueButton = document.getElementById("closeIssueModal");
-
 const cancelIssueButton = document.querySelector(".cancel-btn");
-
 const issueForm = document.getElementById("issueForm");
-
 const studentSelect = document.getElementById("studentSelect");
-
 const bookSelect = document.getElementById("bookSelect");
-
 const tableBody = document.querySelector(".issue-table tbody");
+const searchIssue = document.getElementById("searchIssue");
 
 // ==========================================
-// OPEN MODAL
+// OPEN / CLOSE MODAL
 // ==========================================
-
-
 issueButton.addEventListener("click", function () {
 
     issueForm.reset();
-
     resetDetails();
 
-    issueModal.style.display = "flex";
+    const today = new Date();
 
+    document.getElementById("issueDate").value =
+        today.toISOString().split("T")[0];
+
+    const returnDate = new Date(today);
+    returnDate.setDate(returnDate.getDate() + 15);
+
+    document.getElementById("expectedReturnDate").value =
+        returnDate.toISOString().split("T")[0];
+
+    issueModal.style.display = "flex";
 });
 
+closeIssueButton.addEventListener("click", closeModal);
+cancelIssueButton.addEventListener("click", closeModal);
+window.addEventListener("click", function (event) {
+    if (event.target === issueModal) closeModal();
+});
+function closeModal() {
+    issueModal.style.display = "none";
+}
 
+function resetDetails() {
+    document.getElementById("displayStudentId").textContent = "-";
+    document.getElementById("displayStudentName").textContent = "-";
+    document.getElementById("displayStudentCourse").textContent = "-";
+    document.getElementById("displayBookId").textContent = "-";
+    document.getElementById("displayAuthor").textContent = "-";
+    document.getElementById("displayCopies").textContent = "-";
+}
+
+// ==========================================
+// LOAD DROPDOWNS
+// ==========================================
+function loadStudentOptions() {
+    studentSelect.innerHTML = `<option value="">Select Student</option>`;
+    students.forEach(function (student) {
+        studentSelect.innerHTML += `<option value="${student.id}">${student.id} - ${student.name}</option>`;
+    });
+}
+
+function loadBookOptions() {
+    bookSelect.innerHTML = `<option value="">Select Book</option>`;
+    books.forEach(function (book) {
+        bookSelect.innerHTML += `<option value="${book.id}">${book.id} - ${book.name} (${book.quantity} left)</option>`;
+    });
+}
+
+// ==========================================
+// STUDENT / BOOK DETAILS ON SELECT
+// ==========================================
+studentSelect.addEventListener("change", function () {
+    if (this.value === "") {
+        document.getElementById("displayStudentId").textContent = "-";
+        document.getElementById("displayStudentName").textContent = "-";
+        document.getElementById("displayStudentCourse").textContent = "-";
+        return;
+    }
+    const student = students.find(s => s.id === this.value);
+    if (!student) return;
+    document.getElementById("displayStudentId").textContent = student.id;
+    document.getElementById("displayStudentName").textContent = student.name;
+    document.getElementById("displayStudentCourse").textContent = student.course || "-";
+});
+
+bookSelect.addEventListener("change", refreshSelectedBook);
+
+function refreshSelectedBook() {
+    if (bookSelect.value === "") {
+        document.getElementById("displayBookId").textContent = "-";
+        document.getElementById("displayAuthor").textContent = "-";
+        document.getElementById("displayCopies").textContent = "-";
+        return;
+    }
+    const book = books.find(b => b.id === bookSelect.value);
+    if (!book) return;
+    document.getElementById("displayBookId").textContent = book.id;
+    document.getElementById("displayAuthor").textContent = book.author;
+    document.getElementById("displayCopies").textContent = book.quantity;
+}
+
+// ==========================================
+// ISSUE BOOK
+// ==========================================
 issueForm.addEventListener("submit", async function (event) {
-
     event.preventDefault();
 
     if (studentSelect.value === "" || bookSelect.value === "") {
@@ -59,309 +126,149 @@ issueForm.addEventListener("submit", async function (event) {
         return;
     }
 
-    const body = {
-       member_id: students[Number(studentSelect.value)].id,
-        book_id: books[Number(bookSelect.value)].id,
-        issue_date: document.getElementById("issueDate").value,
-        return_date: document.getElementById("returnDate").value
-    };
+   const issueDate = document.getElementById("issueDate").value;
 
-    try {
-
-        const response = await fetch(ISSUE_API, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${getToken()}`
-            },
-            body: JSON.stringify(body)
-        });
-
-        if (!response.ok) {
-            throw new Error("Issue failed");
-        }
-
-        alert("Book Issued Successfully");
-
-        closeModal();
-
-        await loadBooks();
-
-        await loadIssueTable();
-
-    } catch (err) {
-
-        console.error(err);
-
-        alert("Unable to issue book");
-
-    }
-
-});
-
-// ==========================================
-// CLOSE MODAL
-// ==========================================
-
-closeIssueButton.addEventListener("click", closeModal);
-
-cancelIssueButton.addEventListener("click", closeModal);
-
-window.addEventListener("click", function(event){
-
-    if(event.target === issueModal){
-
-        closeModal();
-
-    }
-
-});
-
-function closeModal() {
-
-    issueModal.style.display = "none";
-
-    issueForm.reset();
-
-    resetDetails();
-
+if (issueDate === "") {
+    alert("Please select Issue Date.");
+    return;
 }
 
-// ==========================================
-// RESET DETAILS
-// ==========================================
-
-function resetDetails(){
-
-    document.getElementById("displayStudentId").textContent="-";
-
-    document.getElementById("displayStudentName").textContent="-";
-
-    document.getElementById("displayStudentCourse").textContent="-";
-
-    document.getElementById("displayBookId").textContent="-";
-
-    document.getElementById("displayAuthor").textContent="-";
-
-    document.getElementById("displayCopies").textContent="-";
-
-}// ==========================================
-// LOAD STUDENTS
-// ==========================================
-
-async function loadStudents() {
-
-    const response = await fetch(MEMBER_API, {
-        headers: {
-            Authorization: `Bearer ${getToken()}`
-        }
-    });
-
-   const result = await response.json();
-
-        console.log("Books API =", result);
-
-        books = result.books || [];
-
-        console.log("Books =", books);
-
-    studentSelect.innerHTML = `<option value="">Select Student</option>`;
-
-    students.forEach((student, index) => {
-
-        studentSelect.innerHTML += `
-            <option value="${index}">
-                ${student.id} - ${student.name}
-            </option>
-        `;
-
-    });
-
-}
-
-// ==========================================
-// LOAD BOOKS
-// ==========================================
-
-async function loadBooks() {
-
-    const response = await fetch(BOOK_API, {
-        headers: {
-            Authorization: `Bearer ${getToken()}`
-        }
-    });
-
-    const result = await response.json();
-
-        console.log("Issues API =", result);
-
-        issuedBooks = result.issues || [];
-
-        console.log("Issued =", issuedBooks);
-
-    bookSelect.innerHTML = `<option value="">Select Book</option>`;
-
-    books.forEach((book, index) => {
-
-        bookSelect.innerHTML += `
-            <option value="${index}">
-                ${book.id} - ${book.title}
-            </option>
-        `;
-
-    });
-
-}
-
-// ==========================================
-// INITIAL LOAD
-// ==========================================
-
-(async function () {
-
-    await loadStudents();
-
-    await loadBooks();
-
-    await loadIssueTable();
-
-    refreshSelectedBook();
-
-})();
-// ==========================================
-// STUDENT DETAILS
-// ==========================================
-
-studentSelect.addEventListener("change", function(){
-
-    if(this.value === ""){
-
-        document.getElementById("displayStudentId").textContent = "-";
-        document.getElementById("displayStudentName").textContent = "-";
-        document.getElementById("displayStudentCourse").textContent = "-";
-
+    const book = books.find(b => b.id === bookSelect.value);
+    if (!book || Number(book.quantity) <= 0) {
+        alert("This book is out of stock.");
         return;
-
     }
 
-    const student = students[Number(this.value)];
+    const submitBtn = issueForm.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
 
-    document.getElementById("displayStudentId").textContent = student.id;
+    const res = await window.LibAPI.issueBook(bookSelect.value, studentSelect.value);
 
-    document.getElementById("displayStudentName").textContent = student.name;
+    if (submitBtn) submitBtn.disabled = false;
 
-    document.getElementById("displayStudentCourse").textContent = student.course;
+    if (!res.success) {
+        alert(res.message);
+        return;
+    }
 
+    await loadAll();
+    closeModal();
+    alert("Book issued successfully! Due back on " + res.dueDate);
 });
 
 // ==========================================
-// BOOK DETAILS
-// ==========================================
-
-bookSelect.addEventListener("change", function(){
-
-    if(this.value === ""){
-
-        document.getElementById("displayBookId").textContent = "-";
-        document.getElementById("displayAuthor").textContent = "-";
-        document.getElementById("displayCopies").textContent = "-";
-
-        return;
-
-    }
-
-    const book = books[Number(this.value)];
-
-    document.getElementById("displayBookId").textContent = book.id;
-
-    document.getElementById("displayAuthor").textContent = book.author;
-
-    document.getElementById("displayCopies").textContent = book.quantity;
-
-});// ==========================================
 // LOAD ISSUE TABLE
 // ==========================================
+function renderIssueTable(query) {
+    const term = (query || "").trim().toLowerCase();
+    const visible = term
+        ? issues.filter(i => `${i.issueId} ${i.studentName} ${i.bookName}`.toLowerCase().includes(term))
+        : issues;
 
-async function loadIssueTable() {
+    tableBody.innerHTML = "";
 
-    try {
+    visible.forEach(function (issue) {
+        const row = document.createElement("tr");
 
-        const response = await fetch(ISSUE_API, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
+        row.innerHTML = `
+            <td>${issue.issueId}</td>
+            <td>${issue.studentName}</td>
+            <td>${issue.bookName}</td>
+            <td>${issue.issueDate}</td>
+            <td>${issue.returnDate}</td>
+            <td>
+                <span class="status ${issue.status.toLowerCase()}">
+                    ${issue.status}
+                </span>
+            </td>
+            <td>
+    ${
+        issue.status === "Issued"
+        ? `
+        <button class="return-btn" data-id="${issue.issueId}" title="Return Book">
+            <i class="fa-solid fa-rotate-left"></i>
+        </button>
+        `
+        : `
+        <span class="returned-label">
+            <i class="fa-solid fa-check-circle"></i> Returned
+        </span>
+        `
+    }
+</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+
+    // Attach click event AFTER creating all rows
+    document.querySelectorAll(".return-btn").forEach(btn => {
+
+        btn.addEventListener("click", async function () {
+
+            const issueId = this.dataset.id;
+
+            if (!confirm("Return this book?")) return;
+
+            const res = await window.LibAPI.returnBook(issueId);
+
+            alert(res.message);
+
+            if (res.success) {
+                await loadAll();
             }
-        });
-
-        const result = await response.json();
-
-        console.log("Members API =", result);
-
-        students = result.members || [];
-
-        console.log("Students =", students);
-
-        tableBody.innerHTML = "";
-
-        issuedBooks.forEach(issue => {
-
-            tableBody.innerHTML += `
-                <tr>
-                    <td>${issue.id}</td>
-                    <td>${issue.member_name}</td>
-                    <td>${issue.book_title}</td>
-                    <td>${issue.issue_date}</td>
-                    <td>${issue.return_date}</td>
-                    <td>
-                        <span class="status issued">
-                            ${issue.status}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="view-btn">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
 
         });
 
-        document.getElementById("totalIssuedCount").textContent =
-            issuedBooks.length;
+    });
 
-    } catch (err) {
+    const activeIssued = issues.filter(i => i.status === "Issued");
 
-        console.error(err);
+    const totalCountEl = document.getElementById("totalIssuedCount");
 
-    }
-
+    if (totalCountEl)
+        totalCountEl.textContent = activeIssued.length;
 }
 
+            document.querySelectorAll(".return-btn").forEach(btn => {
+
+    btn.addEventListener("click", async function () {
+
+        const issueId = this.dataset.id;
+
+        if (!confirm("Return this book?")) return;
+
+        const res = await window.LibAPI.returnBook(issueId);
+
+        alert(res.message);
+
+        if (res.success) {
+            loadAll();
+        }
+
+    });
+
+});
 
 // ==========================================
-// REFRESH BOOK DETAILS
+// LOAD EVERYTHING
 // ==========================================
-
-function refreshSelectedBook(){
-
-    if(bookSelect.value === ""){
-
-        return;
-
-    }
-
-    const book = books[Number(bookSelect.value)];
-
-    document.getElementById("displayBookId").textContent = book.id;
-
-    document.getElementById("displayAuthor").textContent = book.author;
-
-    document.getElementById("displayCopies").textContent = book.quantity;
-
+async function loadAll() {
+    [books, students, issues] = await Promise.all([
+        window.LibAPI.getBooks(),
+        window.LibAPI.getStudents(),
+        window.LibAPI.getIssues(),
+    ]);
+    loadStudentOptions();
+    loadBookOptions();
+    refreshSelectedBook();
+    renderIssueTable(searchIssue ? searchIssue.value : "");
 }
 
-// ==========================================
-// UPDATE BOOK DETAILS AFTER ISSUE
-// ==========================================
+if (searchIssue) {
+    searchIssue.addEventListener("keyup", function () {
+        renderIssueTable(this.value);
+    });
+}
 
-bookSelect.addEventListener("change", refreshSelectedBook);
+loadAll();

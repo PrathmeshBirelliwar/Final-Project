@@ -1,31 +1,160 @@
-/* Safe, member-scoped browser persistence for the demo application. */
+/* Member-scoped data + session, backed by the real Library Hub backend. */
 (function () {
-    const PREFIX = "library_user_";
-    const INVENTORY_KEY = "library_catalog_inventory";
-    const DAILY_FINE_RATE = 10;
-    const safeRead = (key, fallback) => { try { const value = JSON.parse(localStorage.getItem(key)); return value == null ? fallback : value; } catch (_) { return fallback; } };
-    const safeWrite = (key, value) => localStorage.setItem(key, JSON.stringify(value));
-    const array = key => { const value = safeRead(key, []); return Array.isArray(value) ? value : []; };
+    const API_BASE = window.LIBRARY_API_BASE || "http://localhost:5000/api";
+    const SESSION_KEY = "library_member_session";
+    let DAILY_FINE_RATE = 5; // fallback until /api/settings responds
+    apiFetch("/settings").then(res => { if (res.success) DAILY_FINE_RATE = res.settings.finePerDay; });
+
+    const cache = { loans: [], history: [], reservations: [], fines: [], notifications: [], profile: {} };
+    let readyPromise = null;
+
+    function getSession() {
+        try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch (_) { return null; }
+    }
+    function getToken() {
+        const s = getSession();
+        return s ? s.token : null;
+    }
+
+    async function apiFetch(path, options = {}) {
+        const token = getToken();
+        const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
+        if (token) headers["Authorization"] = "Bearer " + token;
+        try {
+            const res = await fetch(`${API_BASE}${path}`, Object.assign({}, options, { headers }));
+            let data;
+            try { data = await res.json(); } catch (_) { data = {}; }
+            if (typeof data.success === "undefined") data.success = res.ok;
+            return data;
+        } catch (err) {
+            console.error("Network error calling", path, err);
+            return { success: false, message: "Could not reach the server. Please check your connection and that the backend is running." };
+        }
+    }
+
     const today = () => new Date().toISOString().slice(0, 10);
-    const dateLabel = value => new Date(`${value}T00:00:00`).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-    const memberId = () => { const auth = safeRead("library_auth", null); if (auth && typeof auth.memberId === "string") return auth.memberId; const email = localStorage.getItem("memberEmail") || "demo-member@library.local"; return `member-${email.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "demo-member"}`; };
-    const key = name => `${PREFIX}${memberId()}_${name}`;
-    const inventory = () => { const stored = safeRead(INVENTORY_KEY, {}); return stored && typeof stored === "object" && !Array.isArray(stored) ? stored : {}; };
-    function migrate(name, legacyKey, transform) { const scoped = array(key(name)); if (scoped.length || localStorage.getItem(key(`${name}_migrated`))) return scoped; const migrated = array(legacyKey).map(transform).filter(Boolean); if (migrated.length) safeWrite(key(name), migrated); localStorage.setItem(key(`${name}_migrated`), "true"); return migrated; }
-    function updateInventory(bookId, delta) { const book = LibraryCatalog.getById(bookId); if (!book) return false; const items = inventory(); const current = Number.isInteger(items[bookId]) ? items[bookId] : book.availableCopies; items[bookId] = Math.max(0, Math.min(book.totalCopies, current + delta)); safeWrite(INVENTORY_KEY, items); return true; }
-    function normalizeLoan(loan) { const book = LibraryCatalog.getById(loan.bookId) || LibraryCatalog.getByTitle(loan.title); return book ? { id: loan.id || `loan-${Date.now()}-${book.id}`, bookId: book.id, memberId: memberId(), borrowedDate: loan.borrowedDateISO || loan.borrowedDate || today(), dueDate: loan.dueDateISO || loan.dueDate || today(), status: "Active", renewals: Number(loan.renewals) || 0 } : null; }
+    const dateLabel = value => value ? new Date(`${value}T00:00:00`).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "-";
+
+    async function refreshCache() {
+        if (!getToken()) return;
+        const [loansRes, historyRes, reservationsRes, finesRes, notifRes, profileRes] = await Promise.all([
+            apiFetch("/issues/mine"),
+            apiFetch("/issues/history/mine"),
+            apiFetch("/reservations/mine"),
+            apiFetch("/fines/mine"),
+            apiFetch("/notifications/mine"),
+            apiFetch(`/members/${getSession().id}/profile`),
+        ]);
+        if (loansRes.success) cache.loans = loansRes.issues.map(i => ({
+            id: i.id, bookId: i.bookId, title: i.bookTitle, author: i.bookAuthor, image: i.bookImage,
+            borrowedDate: i.borrowedDate, dueDate: i.dueDate, status: "Active", renewals: i.renewals,
+        }));
+        if (historyRes.success) cache.history = historyRes.history.map(i => ({
+            id: i.id, bookId: i.bookId, title: i.bookTitle, author: i.bookAuthor,
+            borrowedDate: i.borrowedDate, dueDate: i.dueDate, returnedDate: i.returnedDate,
+            fineAmount: i.fineAmount, status: "Returned",
+        }));
+        if (reservationsRes.success) cache.reservations = reservationsRes.reservations.map(r => ({
+            id: r.id, bookId: r.bookId, reservedDate: r.reservedDate, status: r.status,
+        }));
+        if (finesRes.success) cache.fines = finesRes.fines.map(f => ({
+            id: f.issueId, issueId: f.issueId, bookId: f.bookId, book: f.book, amount: f.amount,
+            status: f.status, createdDate: f.createdDate,
+        }));
+        if (notifRes.success) cache.notifications = notifRes.notifications;
+        if (profileRes.success) cache.profile = profileRes.member;
+    }
+
     const Store = {
-        DAILY_FINE_RATE, safeRead, dateLabel, today, currentMemberId: memberId,
-        getAvailableCopies(bookId) { const book = LibraryCatalog.getById(bookId); if (!book) return 0; const value = inventory()[bookId]; return Number.isInteger(value) ? value : book.availableCopies; },
-        getBorrowedBooks() { return migrate("borrowedBooks", "borrowedBooks", normalizeLoan); }, saveBorrowedBooks(loans) { safeWrite(key("borrowedBooks"), Array.isArray(loans) ? loans : []); },
-        getHistory() { return migrate("history", "history", item => { const book = LibraryCatalog.getById(item.bookId) || LibraryCatalog.getByTitle(item.title); return book ? { ...item, bookId: book.id, memberId: memberId() } : null; }); }, saveHistory(items) { safeWrite(key("history"), Array.isArray(items) ? items : []); },
-        getReservations() { return migrate("reservations", "reservations", item => { const book = LibraryCatalog.getById(item.bookId) || LibraryCatalog.getByTitle(item.title); return book ? { id: item.id || `reservation-${Date.now()}-${book.id}`, bookId: book.id, memberId: memberId(), reservedDate: item.reservedDate || today(), status: item.status || "Pending" } : null; }); }, saveReservations(items) { safeWrite(key("reservations"), Array.isArray(items) ? items : []); },
-        getFines() { return migrate("fines", "libraryFines", item => ({ ...item, id: item.id || `fine-${Date.now()}`, memberId: memberId(), bookId: item.bookId || LibraryCatalog.getByTitle(item.book)?.id || "", createdDate: item.createdDate || item.date || today(), status: item.status === "Paid" ? "Paid" : "Pending" })); }, saveFines(items) { safeWrite(key("fines"), Array.isArray(items) ? items : []); },
-        getProfile() { const value = safeRead(key("profile"), null); if (value && typeof value === "object" && !Array.isArray(value)) return value; const legacy = safeRead("memberProfile", {}); return legacy && typeof legacy === "object" && !Array.isArray(legacy) ? legacy : {}; }, saveProfile(profile) { safeWrite(key("profile"), profile && typeof profile === "object" ? profile : {}); },
-        borrowBook(bookId) { const book = LibraryCatalog.getById(bookId), loans = this.getBorrowedBooks(); if (!book) return { ok: false, message: "Book not found." }; if (loans.some(loan => loan.bookId === bookId && loan.status === "Active")) return { ok: false, message: "You already have this book borrowed." }; if (this.getAvailableCopies(bookId) < 1) return { ok: false, message: "This book is currently unavailable." }; const borrowedDate = today(), due = new Date(`${borrowedDate}T00:00:00`); due.setDate(due.getDate() + 14); const loan = { id: `loan-${Date.now()}-${bookId}`, bookId, memberId: memberId(), borrowedDate, dueDate: due.toISOString().slice(0, 10), status: "Active", renewals: 0 }; this.saveBorrowedBooks([...loans, loan]); updateInventory(bookId, -1); return { ok: true, loan }; },
-        renewLoan(loanId) { const loans = this.getBorrowedBooks(), index = loans.findIndex(loan => loan.id === loanId && loan.status === "Active"); if (index < 0) return { ok: false, message: "Active loan not found." }; const loan = loans[index]; if (loan.renewals >= 2) return { ok: false, message: "This loan has reached the renewal limit." }; const base = new Date(`${(loan.dueDate < today() ? today() : loan.dueDate)}T00:00:00`); base.setDate(base.getDate() + 14); loans[index] = { ...loan, dueDate: base.toISOString().slice(0, 10), renewals: loan.renewals + 1 }; this.saveBorrowedBooks(loans); return { ok: true, loan: loans[index] }; },
-        returnLoan(loanId) { const loans = this.getBorrowedBooks(), loan = loans.find(item => item.id === loanId && item.status === "Active"); if (!loan) return { ok: false, message: "Active loan not found." }; const returnedDate = today(), overdueDays = Math.max(0, Math.ceil((new Date(`${returnedDate}T00:00:00`) - new Date(`${loan.dueDate}T00:00:00`)) / 86400000)), fineAmount = overdueDays * DAILY_FINE_RATE, historyItem = { ...loan, status: "Returned", returnedDate, overdueDays, fineAmount }; this.saveBorrowedBooks(loans.filter(item => item.id !== loanId)); this.saveHistory([...this.getHistory(), historyItem]); updateInventory(loan.bookId, 1); if (fineAmount > 0) this.saveFines([...this.getFines(), { id: `fine-${loanId}`, loanId, bookId: loan.bookId, memberId: memberId(), amount: fineAmount, status: "Pending", createdDate: returnedDate }]); return { ok: true, historyItem }; },
-        reserveBook(bookId) { const book = LibraryCatalog.getById(bookId), reservations = this.getReservations(); if (!book) return { ok: false, message: "Book not found." }; if (reservations.some(item => item.bookId === bookId && ["Pending", "Ready"].includes(item.status))) return { ok: false, message: "You already have an active reservation for this book." }; const reservation = { id: `reservation-${Date.now()}-${bookId}`, bookId, memberId: memberId(), reservedDate: today(), status: "Pending" }; this.saveReservations([...reservations, reservation]); return { ok: true, reservation }; }
+        dateLabel, today, currentMemberId: () => (getSession() || {}).id,
+        get DAILY_FINE_RATE() { return DAILY_FINE_RATE; },
+
+        ready() {
+            if (!readyPromise) readyPromise = refreshCache();
+            return readyPromise;
+        },
+        refresh() {
+            readyPromise = refreshCache();
+            return readyPromise;
+        },
+
+        // ---- Auth ----
+        isLoggedIn() { return !!getToken(); },
+        getSession,
+        async login(email, password) {
+            const res = await apiFetch("/auth/login", { method: "POST", body: JSON.stringify({ identifier: email, password, role: "Member" }) });
+            if (res.success) {
+                sessionStorage.setItem(SESSION_KEY, JSON.stringify({ id: res.user.id, name: res.user.name, email: res.user.email, token: res.token }));
+            }
+            return res;
+        },
+        async register(name, email, password, phone) {
+            const res = await apiFetch("/auth/register", { method: "POST", body: JSON.stringify({ name, email, password, phone }) });
+            if (res.success) {
+                sessionStorage.setItem(SESSION_KEY, JSON.stringify({ id: res.user.id, name: res.user.name, email: res.user.email, token: res.token }));
+            }
+            return res;
+        },
+        logout() { sessionStorage.removeItem(SESSION_KEY); },
+        async changePassword(currentPassword, newPassword) {
+            return apiFetch("/auth/change-password", { method: "POST", body: JSON.stringify({ currentPassword, newPassword }) });
+        },
+
+        // ---- Reads (from cache; call ready() first) ----
+        getAvailableCopies(bookId) {
+            const book = window.LibraryCatalog.getById(bookId);
+            return book ? book.availableCopies : 0;
+        },
+        getBorrowedBooks() { return cache.loans; },
+        getHistory() { return cache.history; },
+        getReservations() { return cache.reservations; },
+        getFines() { return cache.fines; },
+        getNotifications() { return cache.notifications; },
+        getProfile() { return cache.profile || {}; },
+
+        // ---- Mutations (call the real backend, then refresh the cache) ----
+        async borrowBook(bookId) {
+            const res = await apiFetch("/issues", { method: "POST", body: JSON.stringify({ bookId }) });
+            if (res.success) { await Store.refresh(); await window.LibraryCatalog.refresh(); }
+            return { ok: res.success, message: res.message };
+        },
+        async renewLoan(loanId) {
+            const res = await apiFetch(`/issues/${loanId}/renew`, { method: "POST" });
+            if (res.success) await Store.refresh();
+            return { ok: res.success, message: res.message };
+        },
+        async returnLoan(loanId) {
+            const res = await apiFetch(`/issues/${loanId}/return`, { method: "POST" });
+            if (res.success) { await Store.refresh(); await window.LibraryCatalog.refresh(); }
+            return { ok: res.success, message: res.message, historyItem: { fineAmount: res.fineAmount || 0 } };
+        },
+        async reserveBook(bookId) {
+            const res = await apiFetch("/reservations", { method: "POST", body: JSON.stringify({ bookId }) });
+            if (res.success) await Store.refresh();
+            return { ok: res.success, message: res.message };
+        },
+        async cancelReservation(id) {
+            const res = await apiFetch(`/reservations/${id}/cancel`, { method: "PUT" });
+            if (res.success) await Store.refresh();
+            return { ok: res.success, message: res.message };
+        },
+        async payFine(issueId) {
+            const res = await apiFetch(`/fines/${issueId}/pay`, { method: "POST" });
+            if (res.success) await Store.refresh();
+            return { ok: res.success, message: res.message };
+        },
+        async saveProfile(profile) {
+            const session = getSession();
+            const res = await apiFetch(`/members/${session.id}/profile`, { method: "PUT", body: JSON.stringify(profile) });
+            if (res.success) await Store.refresh();
+            return { ok: res.success, message: res.message };
+        },
+        async markAllNotificationsRead() {
+            const res = await apiFetch("/notifications/mark-all-read", { method: "PUT" });
+            if (res.success) await Store.refresh();
+            return res;
+        },
     };
+
     window.LibraryStore = Store;
 }());

@@ -37,7 +37,9 @@ router.post("/", requireAuth, requireRole("Admin"), async (req, res) => {
         const [existingEmail] = await pool.query("SELECT id FROM librarians WHERE LOWER(email) = ?", [email]);
         if (existingEmail.length) return res.status(409).json({ success: false, message: "A librarian with this email already exists." });
 
-        const id = await nextId(pool, "librarians", "LIB", 3);
+        let id = l.id && l.id.trim() ? l.id.trim() : await nextId(pool, "librarians", "LIB", 3);
+        const [existingId] = await pool.query("SELECT id FROM librarians WHERE id = ?", [id]);
+        if (existingId.length) return res.status(409).json({ success: false, message: `Librarian ID "${id}" already exists.` });
         const tempPassword = l.password && l.password.length >= 6 ? l.password : "librarian123";
         const hash = await bcrypt.hash(tempPassword, 10);
 
@@ -53,12 +55,51 @@ router.post("/", requireAuth, requireRole("Admin"), async (req, res) => {
     }
 });
 
+// GET /api/librarians/me — the logged-in librarian's own profile
+// (must be declared BEFORE the /:id route below, or Express would match "me" as an :id)
+router.get("/me", requireAuth, requireRole("Librarian"), async (req, res) => {
+    try {
+        const [rows] = await pool.query("SELECT * FROM librarians WHERE id = ?", [req.user.id]);
+        if (!rows.length) return res.status(404).json({ success: false, message: "Account not found." });
+        res.json({ success: true, librarian: mapLibrarian(rows[0]) });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Failed to load profile." });
+    }
+});
+
+// PUT /api/librarians/me — the logged-in librarian updates their own name/phone
+// (must be declared BEFORE the /:id route below, or Express would match "me" as an :id)
+router.put("/me", requireAuth, requireRole("Librarian"), async (req, res) => {
+    try {
+        const { name, phone, address } = req.body;
+        const [rows] = await pool.query("SELECT * FROM librarians WHERE id = ?", [req.user.id]);
+        if (!rows.length) return res.status(404).json({ success: false, message: "Account not found." });
+        await pool.query("UPDATE librarians SET name = ?, phone = ?, address = ? WHERE id = ?", [
+            name ? String(name).trim() : rows[0].name,
+            phone ? String(phone).trim() : rows[0].phone,
+            address !== undefined ? String(address).trim() : rows[0].address,
+            req.user.id,
+        ]);
+        res.json({ success: true, message: "Profile updated successfully!" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Failed to update profile." });
+    }
+});
+
 // PUT /api/librarians/:id — Admin only
 router.put("/:id", requireAuth, requireRole("Admin"), async (req, res) => {
     try {
         const [rows] = await pool.query("SELECT * FROM librarians WHERE id = ?", [req.params.id]);
         if (!rows.length) return res.status(404).json({ success: false, message: "Librarian not found." });
         const l = req.body;
+
+        if (l.password && l.password.trim()) {
+            if (l.password.length < 6) return res.status(400).json({ success: false, message: "New password must be at least 6 characters long." });
+            const hash = await bcrypt.hash(l.password, 10);
+            await pool.query("UPDATE librarians SET password_hash = ? WHERE id = ?", [hash, req.params.id]);
+        }
 
         await pool.query(
             `UPDATE librarians SET name=?, email=?, phone=?, address=?, status=? WHERE id=?`,

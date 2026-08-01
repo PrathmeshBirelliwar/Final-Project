@@ -1,143 +1,89 @@
 // ==========================================
-// DATABASE
+// AUTH GUARD
 // ==========================================
-
-const settings = DATABASE.settings;
+if (!window.LibAPI.isLoggedIn()) {
+    window.location.href = "login.html";
+}
 
 // ==========================================
 // ELEMENTS
 // ==========================================
-
 const libraryName = document.getElementById("libraryName");
-
 const libraryAddress = document.getElementById("libraryAddress");
-
 const libraryContact = document.getElementById("libraryContact");
-
 const libraryEmail = document.getElementById("libraryEmail");
-
 const maxBooks = document.getElementById("maxBooks");
-
 const loanDays = document.getElementById("loanDays");
-
 const finePerDay = document.getElementById("finePerDay");
+const saveSettingsBtn = document.getElementById("saveSettings");
+const resetSettingsBtn = document.getElementById("resetSettings");
+const clearDatabaseBtn = document.getElementById("clearDatabase");
 
-const saveSettings = document.getElementById("saveSettings");
-
-const resetSettings = document.getElementById("resetSettings");
-
-const clearDatabase = document.getElementById("clearDatabase");
+const DEFAULTS = { libraryName: "Smart Library", libraryAddress: "", libraryContact: "", libraryEmail: "", maxBooksPerMember: 3, loanDays: 15, finePerDay: 5 };
 
 // ==========================================
-// LOAD SETTINGS
+// LOAD SETTINGS — these are the real, live values enforced by the backend
+// for every borrow, renewal, and fine calculation across the whole system.
 // ==========================================
+function fillForm(settings) {
+    libraryName.value = settings.libraryName;
+    libraryAddress.value = settings.libraryAddress;
+    libraryContact.value = settings.libraryContact;
+    libraryEmail.value = settings.libraryEmail;
+    maxBooks.value = settings.maxBooksPerMember;
+    loanDays.value = settings.loanDays;
+    finePerDay.value = settings.finePerDay;
+}
 
-function loadSettings(){
-
-    libraryName.value = settings.libraryName || "LibraryMS";
-
-    libraryAddress.value = settings.libraryAddress || "";
-
-    libraryContact.value = settings.libraryContact || "";
-
-    libraryEmail.value = settings.libraryEmail || "";
-
-    maxBooks.value = settings.maxBooksPerStudent || 3;
-
-    loanDays.value = settings.loanDays || 15;
-
-    finePerDay.value = settings.finePerDay || 5;
-
+async function loadSettings() {
+    const settings = await window.LibAPI.getSettings();
+    fillForm(settings || DEFAULTS);
 }
 
 // ==========================================
 // SAVE SETTINGS
 // ==========================================
+saveSettingsBtn.addEventListener("click", async function () {
+    saveSettingsBtn.disabled = true;
 
-saveSettings.addEventListener("click", function(){
+    const res = await window.LibAPI.saveSettings({
+        libraryName: libraryName.value.trim(),
+        libraryAddress: libraryAddress.value.trim(),
+        libraryContact: libraryContact.value.trim(),
+        libraryEmail: libraryEmail.value.trim(),
+        maxBooksPerMember: Number(maxBooks.value),
+        loanDays: Number(loanDays.value),
+        finePerDay: Number(finePerDay.value),
+    });
 
-    settings.libraryName = libraryName.value.trim();
-
-    settings.libraryAddress = libraryAddress.value.trim();
-
-    settings.libraryContact = libraryContact.value.trim();
-
-    settings.libraryEmail = libraryEmail.value.trim();
-
-    settings.maxBooksPerStudent = Number(maxBooks.value);
-
-    settings.loanDays = Number(loanDays.value);
-
-    settings.finePerDay = Number(finePerDay.value);
-
-    saveDatabase();
-
-    alert("Settings saved successfully.");
-
+    saveSettingsBtn.disabled = false;
+    alert(res.message);
+    if (res.success) await loadSettings();
 });
 
 // ==========================================
 // RESTORE DEFAULT SETTINGS
 // ==========================================
-
-resetSettings.addEventListener("click", function(){
-
-    const confirmReset = confirm("Restore default settings?");
-
-    if(!confirmReset){
-
-        return;
-
-    }
-
-    settings.libraryName = "LibraryMS";
-
-    settings.libraryAddress = "";
-
-    settings.libraryContact = "";
-
-    settings.libraryEmail = "";
-
-    settings.maxBooksPerStudent = 3;
-
-    settings.loanDays = 15;
-
-    settings.finePerDay = 5;
-
-    saveDatabase();
-
-    loadSettings();
-
-    alert("Default settings restored.");
-
+resetSettingsBtn.addEventListener("click", async function () {
+    if (!confirm("Restore default settings for the whole system?")) return;
+    fillForm(DEFAULTS);
+    const res = await window.LibAPI.saveSettings(DEFAULTS);
+    alert(res.success ? "Default settings restored." : res.message);
+    if (res.success) await loadSettings();
 });
 
 // ==========================================
-// CLEAR DATABASE
+// CLEAR LOCAL SESSION (this does NOT touch the live library database)
 // ==========================================
-
-clearDatabase.addEventListener("click", function(){
-
-    const confirmDelete = confirm("This will delete ALL library data. Continue?");
-
-    if(!confirmDelete){
-
-        return;
-
-    }
-
-    localStorage.clear();
-
-    alert("All data deleted successfully.");
-
-    location.reload();
-
+clearDatabaseBtn.addEventListener("click", function () {
+    if (!confirm("This clears your saved login and preferences on this device only — it will NOT delete any books, students, or records from the library database. Continue?")) return;
+    localStorage.removeItem("rememberUser");
+    window.LibAPI.logout();
+    alert("Local data cleared. You'll be redirected to the login page.");
+    window.location.href = "login.html";
 });
 
 // ==========================================
 // INITIAL LOAD
 // ==========================================
-
 loadSettings();
-
-

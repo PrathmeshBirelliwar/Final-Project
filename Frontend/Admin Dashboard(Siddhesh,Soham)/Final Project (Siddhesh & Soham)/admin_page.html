@@ -198,42 +198,18 @@
 
 <script>
 async function renderDashboardStats() {
-    try {
-        const token = sessionStorage.getItem("token");
+    if (!window.DB) return;
+    await window.DB.ready();
+    const stats = window.DB.getStats();
 
-        const response = await fetch("http://localhost:5000/api/stats/admin", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-
-        const data = await response.json();
-
-        if (!data.success) {
-            alert(data.message);
-            return;
-        }
-
-        const stats = data.stats;
-
-        document.getElementById("statTotalBooks").innerText = stats.totalBooks;
-        document.getElementById("statTotalMembers").innerText = stats.totalMembers;
-        document.getElementById("statLibrarians").innerText = stats.totalLibrarians;
-        document.getElementById("statIssuedBooks").innerText = stats.issuedBooks;
-        document.getElementById("statReturnedBooks").innerText = stats.returnedBooks;
-        document.getElementById("statPendingReturns").innerText = stats.pendingReturns;
-        document.getElementById("statFineCollection").innerText =
-            "₹" + stats.totalCollectedFines.toLocaleString();
-
-        document.getElementById("statBackupStatus").innerText =
-            stats.lastBackupDate === "None"
-                ? "Ready"
-                : new Date(stats.lastBackupDate).toLocaleDateString();
-
-    } catch (err) {
-        console.error(err);
-        alert("Unable to load dashboard statistics.");
-    }
+    document.getElementById("statTotalBooks").innerText = stats.totalBooks;
+    document.getElementById("statTotalMembers").innerText = stats.totalMembers;
+    document.getElementById("statLibrarians").innerText = stats.totalLibrarians;
+    document.getElementById("statIssuedBooks").innerText = stats.issuedBooks;
+    document.getElementById("statReturnedBooks").innerText = stats.returnedBooks;
+    document.getElementById("statPendingReturns").innerText = stats.pendingReturns;
+    document.getElementById("statFineCollection").innerText = "₹" + stats.totalCollectedFines.toLocaleString();
+    document.getElementById("statBackupStatus").innerText = stats.lastBackupDate !== "None" ? stats.lastBackupDate : "Ready";
 }
 
 document.addEventListener("DOMContentLoaded", renderDashboardStats);

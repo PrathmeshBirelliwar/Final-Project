@@ -143,8 +143,13 @@
             return res.success ? res.stats : { totalBooks: 0, totalStudents: 0, issuedToday: 0, dueToday: 0, overdue: 0, pendingFines: 0 };
         },
 
-        async updateMyProfile(name, phone) {
-            const res = await apiFetch("/librarians/me", { method: "PUT", body: JSON.stringify({ name, phone }) });
+        async getMyProfile() {
+            const res = await apiFetch("/librarians/me");
+            return res.success ? res.librarian : null;
+        },
+
+        async updateMyProfile(name, phone, address) {
+            const res = await apiFetch("/librarians/me", { method: "PUT", body: JSON.stringify({ name, phone, address }) });
             if (res.success) {
                 const session = getSession();
                 if (session) {
@@ -154,6 +159,17 @@
             }
             return res;
         },
+
+        // ---- System settings (real, enforced values — not cosmetic) ----
+        async getSettings() {
+            const res = await apiFetch("/settings");
+            return res.success ? res.settings : null;
+        },
+        async saveSettings(settings) {
+            return apiFetch("/settings", { method: "PUT", body: JSON.stringify(settings) });
+        },
+
+        
     };
 
     window.LibAPI = LibAPI;

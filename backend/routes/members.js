@@ -87,9 +87,9 @@ router.post("/", requireAuth, requireRole("Admin", "Librarian"), async (req, res
         const [existingId] = await pool.query("SELECT id FROM members WHERE id = ?", [id]);
         if (existingId.length) return res.status(409).json({ success: false, message: `Member ID "${id}" already exists.` });
 
-        const tempPassword = m.password && m.password.length >= 6 ? m.password : "member123";
+       // Default password = Member ID
+        const tempPassword = id;
         const hash = await bcrypt.hash(tempPassword, 10);
-
         await pool.query(
             `INSERT INTO members (id, name, email, phone, department, type, password_hash) VALUES (?,?,?,?,?,?,?)`,
             [id, name, email, phone, (m.department || "").trim() || null, m.type || "Student", hash]
