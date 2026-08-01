@@ -25,7 +25,12 @@
         grid.innerHTML = books.map(book => {
             const available = book.availableCopies > 0;
             return `<article class="book-card" data-book-id="${book.id}">
-                <div class="book-image"><img src="${book.image}" alt="${book.title}"><span class="category">${book.categoryLabel}</span></div>
+               <div class="book-image">
+    <div class="book-image-placeholder">
+        <i class="fa-solid fa-book-open"></i>
+    </div>
+    <span class="category">${book.categoryLabel}</span>
+</div>
                 <div class="book-content"><h3>${book.title}</h3><p class="author">By ${book.author}</p>
                 <div class="book-status"><span class="${available ? "available" : "unavailable"}">${available ? `${book.availableCopies} ${book.availableCopies === 1 ? "copy" : "copies"} available` : "Currently Unavailable"}</span></div>
                 <button class="view-button" type="button" data-book-id="${book.id}">View Details</button></div></article>`;

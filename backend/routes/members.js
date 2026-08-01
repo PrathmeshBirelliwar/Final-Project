@@ -14,6 +14,7 @@ function mapMember(row) {
         email: row.email,
         phone: row.phone,
         department: row.department,
+        year: row.year,
         type: row.type,
         membership: row.membership,
         memberSince: row.member_since,
@@ -75,6 +76,7 @@ router.post("/", requireAuth, requireRole("Admin", "Librarian"), async (req, res
         const name = String(m.name || "").trim();
         const email = String(m.email || "").trim().toLowerCase();
         const phone = String(m.phone || "").trim();
+        const year = String(m.year || "").trim();
 
         if (!isValidName(name)) return res.status(400).json({ success: false, message: "Please enter a valid full name." });
         if (!isValidEmail(email)) return res.status(400).json({ success: false, message: "Please enter a valid email address." });
@@ -91,9 +93,20 @@ router.post("/", requireAuth, requireRole("Admin", "Librarian"), async (req, res
         const tempPassword = id;
         const hash = await bcrypt.hash(tempPassword, 10);
         await pool.query(
-            `INSERT INTO members (id, name, email, phone, department, type, password_hash) VALUES (?,?,?,?,?,?,?)`,
-            [id, name, email, phone, (m.department || "").trim() || null, m.type || "Student", hash]
-        );
+    `INSERT INTO members
+(id, name, email, phone, department, year, type, password_hash)
+     VALUES (?,?,?,?,?,?,?,?)`,
+            [
+            id,
+            name,
+            email,
+            phone,
+            (m.department || "").trim() || null,
+            year,
+            m.type || "Student",
+            hash
+                ]
+);
         await logAudit(req.user.role, req.user.id, "Member added", id);
         res.status(201).json({ success: true, message: "Member Added Successfully!", id, temporaryPassword: tempPassword });
     } catch (err) {
@@ -112,15 +125,32 @@ router.put("/:id", requireAuth, requireRole("Admin", "Librarian"), async (req, r
         const name = String(m.name || rows[0].name).trim();
         const email = String(m.email || rows[0].email).trim().toLowerCase();
         const phone = String(m.phone || rows[0].phone).trim();
+        const year = String(m.year || rows[0].year).trim();
 
         if (!isValidName(name)) return res.status(400).json({ success: false, message: "Please enter a valid full name." });
         if (!isValidEmail(email)) return res.status(400).json({ success: false, message: "Please enter a valid email address." });
         if (!isValidPhone(phone)) return res.status(400).json({ success: false, message: "Please enter a valid phone number." });
 
-        await pool.query(
-            `UPDATE members SET name=?, email=?, phone=?, department=?, type=? WHERE id=?`,
-            [name, email, phone, (m.department ?? rows[0].department), m.type || rows[0].type, req.params.id]
-        );
+       await pool.query(
+    `UPDATE members
+        SET
+        name=?,
+        email=?,
+        phone=?,
+        department=?,
+        year=?,
+        type=?
+        WHERE id=?`,
+ [
+    name,
+    email,
+    phone,
+    (m.department ?? rows[0].department),
+    year,
+    m.type || rows[0].type,
+    req.params.id
+]
+);
         await logAudit(req.user.role, req.user.id, "Member updated", req.params.id);
         res.json({ success: true, message: "Member Updated Successfully!" });
     } catch (err) {

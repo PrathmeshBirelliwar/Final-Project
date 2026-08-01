@@ -740,3 +740,33 @@
     font-size: 13px;
 
 }
+
+.book-image-placeholder{
+    width:100%;
+    height:420px;
+    background:#eef4ff;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.book-image-placeholder i{
+    font-size:120px;
+    color:#2563eb;
+}
+
+.book-image-placeholder{
+    width:100%;
+    height:420px;
+    background:#eef4ff;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.book-image-placeholder i{
+    font-size:120px;
+    color:#2563eb;
+}

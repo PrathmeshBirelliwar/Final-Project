@@ -14,8 +14,15 @@
 
         const availableCopies = book.availableCopies;
         const set = (id, value) => { const element = document.getElementById(id); if (element) element.textContent = value; };
-        const image = document.getElementById("bookImage");
-        if (image) { image.src = book.image; image.alt = book.title; }
+       const image = document.getElementById("bookImage");
+
+if (image) {
+    image.outerHTML = `
+        <div class="book-image-placeholder">
+            <i class="fa-solid fa-book-open"></i>
+        </div>
+    `;
+}
 
         set("bookCategory", (book.categoryLabel || "").toUpperCase());
         set("bookTitle", book.title);

@@ -37,7 +37,7 @@
                 <div class="book-actions">
                     <span class="status-badge ${className}">${state}</span>
                     <div class="action-buttons">
-                        <button class="renew-btn" type="button" data-action="renew" data-loan-id="${loan.id}">Renew</button>
+                       
                         <button class="return-btn" type="button" data-action="return" data-loan-id="${loan.id}">Return</button>
                     </div>
                 </div>

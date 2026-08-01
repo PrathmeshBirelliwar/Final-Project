@@ -38,9 +38,16 @@
         return { id: b.id, name: b.title, author: b.author, category: b.category, publisher: b.publisher, isbn: b.isbn, quantity: b.availableCopies, totalQuantity: b.totalCopies };
     }
     // Maps a backend member to the "student" shape the librarian pages use (id, name, course, year, phone, email)
-    function mapStudent(m) {
-        return { id: m.id, name: m.name, course: m.department || "", year: m.type || "", phone: m.phone, email: m.email };
-    }
+   function mapStudent(m) {
+    return {
+        id: m.id,
+        name: m.name,
+        course: m.department || "",
+        year: m.year || "",      // ✅ Correct
+        phone: m.phone,
+        email: m.email
+    };
+}
     function mapIssue(i) {
         return {
             issueId: i.id, studentId: i.memberId, studentName: i.memberName, bookId: i.bookId, bookName: i.bookTitle,
@@ -103,13 +110,21 @@
         async addStudent(student) {
             return apiFetch("/members", {
                 method: "POST",
-                body: JSON.stringify({ id: student.id, name: student.name, email: student.email, phone: student.phone, department: student.course, type: "Student" }),
+               body: JSON.stringify({
+    id: student.id,
+    name: student.name,
+    email: student.email,
+    phone: student.phone,
+    department: student.course,
+    year: student.year,          // ✅ Add this
+    type: "Student"
+}),
             });
         },
         async updateStudent(id, student) {
             return apiFetch(`/members/${encodeURIComponent(id)}`, {
                 method: "PUT",
-                body: JSON.stringify({ name: student.name, email: student.email, phone: student.phone, department: student.course }),
+                body: JSON.stringify({ name: student.name, email: student.email, phone: student.phone, department: student.course,year: student.year }),
             });
         },
         async deleteStudent(id) {
