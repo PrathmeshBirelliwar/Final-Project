@@ -119,7 +119,7 @@ router.post("/register", async (req, res) => {
 
     if (!isValidName(name)) return res.status(400).json({ success: false, message: "Please enter a valid full name." });
     if (!isValidEmail(cleanEmail)) return res.status(400).json({ success: false, message: "Please enter a valid email address." });
-    if (!password || password.length < 6) return res.status(400).json({ success: false, message: "Password must be at least 6 characters." });
+    if (typeof password !== "string" || password.length < 12) return res.status(400).json({ success: false, message: "Password must be at least 12 characters." });
     if (phone && !isValidPhone(phone)) return res.status(400).json({ success: false, message: "Please enter a valid phone number." });
 
     try {
@@ -161,8 +161,8 @@ router.get("/me", requireAuth, async (req, res) => {
 // ---------------------------------------------------------------------
 router.post("/change-password", requireAuth, async (req, res) => {
     const { currentPassword, newPassword } = req.body;
-    if (!newPassword || newPassword.length < 6) {
-        return res.status(400).json({ success: false, message: "New password must be at least 6 characters." });
+    if (typeof newPassword !== "string" || newPassword.length < 12) {
+        return res.status(400).json({ success: false, message: "New password must be at least 12 characters." });
     }
     const table = req.user.role === "Admin" ? "admins" : req.user.role === "Librarian" ? "librarians" : "members";
 
