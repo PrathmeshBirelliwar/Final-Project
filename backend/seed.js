@@ -7,8 +7,8 @@
  */
 require("dotenv").config();
 
-if (process.env.NODE_ENV === "production") {
-    throw new Error("Refusing to seed demo accounts in production. Use a secure, environment-specific account provisioning process.");
+if (process.env.NODE_ENV === "production" || process.env.ALLOW_DEMO_SEED !== "true") {
+    throw new Error("Demo seeding is disabled by default. For a disposable local development database only, set ALLOW_DEMO_SEED=true. Production seeding is never allowed.");
 }
 
 const bcrypt = require("bcryptjs");
