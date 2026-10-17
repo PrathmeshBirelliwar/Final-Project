@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const { randomBytes } = require("crypto");
 const pool = require("../config/db");
 const { requireAuth, requireRole } = require("../middleware/auth");
 const { nextId, isValidEmail, isValidPhone, isValidName } = require("../utils/helpers");
@@ -40,7 +41,7 @@ router.post("/", requireAuth, requireRole("Admin"), async (req, res) => {
         let id = l.id && l.id.trim() ? l.id.trim() : await nextId(pool, "librarians", "LIB", 3);
         const [existingId] = await pool.query("SELECT id FROM librarians WHERE id = ?", [id]);
         if (existingId.length) return res.status(409).json({ success: false, message: `Librarian ID "${id}" already exists.` });
-        const tempPassword = l.password && l.password.length >= 6 ? l.password : "librarian123";
+        const tempPassword = l.password && l.password.length >= 12 ? l.password : randomBytes(18).toString("hex");
         const hash = await bcrypt.hash(tempPassword, 10);
 
         await pool.query(
@@ -48,7 +49,7 @@ router.post("/", requireAuth, requireRole("Admin"), async (req, res) => {
             [id, name, email, phone, (l.address || "").trim() || null, hash]
         );
         await logAudit("Admin", req.user.id, "Librarian added", id);
-        res.status(201).json({ success: true, message: "Librarian Added Successfully!", id, temporaryPassword: tempPassword });
+        res.status(201).json({ success: true, message: "Librarian Added Successfully! Share the temporary password securely.", id, temporaryPassword: tempPassword });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: "Failed to add librarian." });
