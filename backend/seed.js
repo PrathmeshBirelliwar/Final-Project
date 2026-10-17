@@ -6,6 +6,11 @@
  * Usage: node seed.js
  */
 require("dotenv").config();
+
+if (process.env.NODE_ENV === "production") {
+    throw new Error("Refusing to seed demo accounts in production. Use a secure, environment-specific account provisioning process.");
+}
+
 const bcrypt = require("bcryptjs");
 const pool = require("./config/db");
 
