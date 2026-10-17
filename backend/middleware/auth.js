@@ -1,7 +1,11 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (typeof JWT_SECRET !== "string" || JWT_SECRET.length < 32 || JWT_SECRET.startsWith("replace_with_") || JWT_SECRET === "dev_secret_change_me" || JWT_SECRET === "change_this_to_a_long_random_secret_in_production") {
+    throw new Error("JWT_SECRET must be set to a strong, unique secret in backend/.env or the hosting environment.");
+}
 
 function signToken(payload) {
     return jwt.sign(payload, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "7d" });
