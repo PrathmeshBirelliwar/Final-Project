@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const { randomBytes } = require("crypto");
 const pool = require("../config/db");
 const { requireAuth, requireRole } = require("../middleware/auth");
 const { nextId, isValidEmail, isValidPhone, isValidName } = require("../utils/helpers");
@@ -22,7 +23,7 @@ function mapMember(row) {
     };
 }
 
-// GET /api/members  — Admin or Librarian
+// GET /api/members — Admin or Librarian
 router.get("/", requireAuth, requireRole("Admin", "Librarian"), async (req, res) => {
     try {
         const [rows] = await pool.query("SELECT * FROM members ORDER BY created_at DESC");
@@ -69,7 +70,7 @@ router.put("/:id/profile", requireAuth, async (req, res) => {
     }
 });
 
-// POST /api/members  — Admin or Librarian creates a member (with a temp password)
+// POST /api/members — Admin or Librarian creates a member (with a random temp password)
 router.post("/", requireAuth, requireRole("Admin", "Librarian"), async (req, res) => {
     try {
         const m = req.body;
@@ -85,37 +86,28 @@ router.post("/", requireAuth, requireRole("Admin", "Librarian"), async (req, res
         const [existingEmail] = await pool.query("SELECT id FROM members WHERE LOWER(email) = ?", [email]);
         if (existingEmail.length) return res.status(409).json({ success: false, message: "A member with this email already exists." });
 
-        let id = m.id && m.id.trim() ? m.id.trim() : await nextId(pool, "members", "MEM", 3);
+        const id = m.id && String(m.id).trim() ? String(m.id).trim() : await nextId(pool, "members", "MEM", 3);
         const [existingId] = await pool.query("SELECT id FROM members WHERE id = ?", [id]);
         if (existingId.length) return res.status(409).json({ success: false, message: `Member ID "${id}" already exists.` });
 
-       // Default password = Member ID
-        const tempPassword = id;
+        // Generate a high-entropy one-time-displayed temporary password instead of using the predictable member ID.
+        const tempPassword = randomBytes(18).toString("hex");
         const hash = await bcrypt.hash(tempPassword, 10);
         await pool.query(
-    `INSERT INTO members
+            `INSERT INTO members
 (id, name, email, phone, department, year, type, password_hash)
-     VALUES (?,?,?,?,?,?,?,?)`,
-            [
-            id,
-            name,
-            email,
-            phone,
-            (m.department || "").trim() || null,
-            year,
-            m.type || "Student",
-            hash
-                ]
-);
+VALUES (?,?,?,?,?,?,?,?)`,
+            [id, name, email, phone, (m.department || "").trim() || null, year, m.type || "Student", hash]
+        );
         await logAudit(req.user.role, req.user.id, "Member added", id);
-        res.status(201).json({ success: true, message: "Member Added Successfully!", id, temporaryPassword: tempPassword });
+        res.status(201).json({ success: true, message: "Member Added Successfully! Share the temporary password securely.", id, temporaryPassword: tempPassword });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: "Failed to add member." });
     }
 });
 
-// PUT /api/members/:id  — Admin or Librarian
+// PUT /api/members/:id — Admin or Librarian
 router.put("/:id", requireAuth, requireRole("Admin", "Librarian"), async (req, res) => {
     try {
         const [rows] = await pool.query("SELECT * FROM members WHERE id = ?", [req.params.id]);
@@ -131,26 +123,10 @@ router.put("/:id", requireAuth, requireRole("Admin", "Librarian"), async (req, r
         if (!isValidEmail(email)) return res.status(400).json({ success: false, message: "Please enter a valid email address." });
         if (!isValidPhone(phone)) return res.status(400).json({ success: false, message: "Please enter a valid phone number." });
 
-       await pool.query(
-    `UPDATE members
-        SET
-        name=?,
-        email=?,
-        phone=?,
-        department=?,
-        year=?,
-        type=?
-        WHERE id=?`,
- [
-    name,
-    email,
-    phone,
-    (m.department ?? rows[0].department),
-    year,
-    m.type || rows[0].type,
-    req.params.id
-]
-);
+        await pool.query(
+            `UPDATE members SET name=?, email=?, phone=?, department=?, year=?, type=? WHERE id=?`,
+            [name, email, phone, (m.department ?? rows[0].department), year, m.type || rows[0].type, req.params.id]
+        );
         await logAudit(req.user.role, req.user.id, "Member updated", req.params.id);
         res.json({ success: true, message: "Member Updated Successfully!" });
     } catch (err) {
